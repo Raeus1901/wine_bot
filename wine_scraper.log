@@ -1,0 +1,438 @@
+2025-01-01 19:10:39,772 - INFO - Safari WebDriver initialized successfully.
+2025-01-01 19:10:39,773 - INFO - Scraping URL 1/61: https://www.vivino.com/US/en/martet-reserve-de-famille/w/1514153?year=2020&price_id=37060762
+2025-01-01 19:10:51,463 - INFO - No 'More' button found or unable to click it.
+2025-01-01 19:10:51,468 - INFO - Rating element found.
+2025-01-01 19:10:51,538 - INFO - Finished scraping URL 1/61.
+
+2025-01-01 19:10:51,538 - INFO - Scraping URL 2/61: https://www.vivino.com/US/en/gitana-lupi-rezerva/w/1468452?year=2017&price_id=33488306
+2025-01-01 19:11:02,694 - INFO - No 'More' button found or unable to click it.
+2025-01-01 19:11:02,714 - INFO - Rating element found.
+2025-01-01 19:11:02,840 - INFO - Finished scraping URL 2/61.
+
+2025-01-01 19:11:02,840 - INFO - Scraping URL 3/61: https://www.vivino.com/US/en/vina-cobos-vinculum-malbec/w/9885443?year=2018&price_id=36095249
+2025-01-01 19:11:14,516 - INFO - No 'More' button found or unable to click it.
+2025-01-01 19:11:14,530 - INFO - Rating element found.
+2025-01-01 19:11:14,663 - INFO - Finished scraping URL 3/61.
+
+2025-01-01 19:11:14,664 - INFO - Scraping URL 4/61: https://www.vivino.com/US/en/bodegas-ateca-atteca-armas-garnacha-old-vines/w/1204799?year=2021&price_id=37033652
+2025-01-01 20:38:39,175 - INFO - Safari WebDriver initialized successfully.
+2025-01-01 20:38:39,177 - INFO - Scraping URL 1/61: https://www.vivino.com/US/en/martet-reserve-de-famille/w/1514153?year=2020&price_id=37060762
+2025-01-01 20:38:51,539 - INFO - No 'More' button found or unable to click it.
+2025-01-01 20:38:51,543 - INFO - Rating element found.
+2025-01-01 20:38:51,784 - INFO - Finished scraping URL 1/61.
+
+2025-01-01 20:38:51,784 - INFO - Scraping URL 2/61: https://www.vivino.com/US/en/gitana-lupi-rezerva/w/1468452?year=2017&price_id=33488306
+2025-01-01 20:39:03,276 - INFO - No 'More' button found or unable to click it.
+2025-01-01 20:39:03,287 - INFO - Rating element found.
+2025-01-01 20:39:03,414 - INFO - Finished scraping URL 2/61.
+
+2025-01-01 20:39:03,414 - INFO - Scraping URL 3/61: https://www.vivino.com/US/en/vina-cobos-vinculum-malbec/w/9885443?year=2018&price_id=36095249
+2025-01-01 20:39:14,393 - INFO - No 'More' button found or unable to click it.
+2025-01-01 20:39:14,408 - INFO - Rating element found.
+2025-01-01 20:39:14,552 - INFO - Finished scraping URL 3/61.
+
+2025-01-01 20:39:14,552 - INFO - Scraping URL 4/61: https://www.vivino.com/US/en/bodegas-ateca-atteca-armas-garnacha-old-vines/w/1204799?year=2021&price_id=37033652
+2025-01-01 20:42:36,356 - INFO - Safari WebDriver initialized successfully.
+2025-01-01 20:42:36,357 - INFO - Fetching: https://www.vivino.com/explore?country_filter=france&price_min=10&price_max=60&grapes_filter=&points_min=&points_max=&alcohol_min=11&alcohol_max=15&wine_types=red-wine&page=1
+2025-01-01 20:42:48,287 - ERROR - Error fetching https://www.vivino.com/explore?country_filter=france&price_min=10&price_max=60&grapes_filter=&points_min=&points_max=&alcohol_min=11&alcohol_max=15&wine_types=red-wine&page=1: Message: 
+
+2025-01-01 20:42:48,289 - INFO - Fetching: https://www.vivino.com/explore?country_filter=france&price_min=10&price_max=60&grapes_filter=&points_min=&points_max=&alcohol_min=11&alcohol_max=15&wine_types=white-wine&page=1
+2025-01-01 20:42:54,931 - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x15006ef60>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/35534EEE-36DE-4D71-98C1-5C19434975D9
+2025-01-01 20:42:54,936 - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x143c47ef0>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/35534EEE-36DE-4D71-98C1-5C19434975D9
+2025-01-01 20:42:54,939 - WARNING - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x137ff8080>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/35534EEE-36DE-4D71-98C1-5C19434975D9
+2025-01-01 20:42:54,970 - INFO - Closed Safari WebDriver.
+2025-01-01 20:43:59,061 - INFO - Safari WebDriver initialized successfully.
+2025-01-01 20:43:59,062 - INFO - Scraping URL 1/61: https://www.vivino.com/US/en/martet-reserve-de-famille/w/1514153?year=2020&price_id=37060762
+2025-01-01 20:44:10,621 - INFO - No 'More' button found or unable to click it.
+2025-01-01 20:44:10,640 - INFO - Rating element found.
+2025-01-01 20:44:10,904 - INFO - Finished scraping URL 1/61.
+
+2025-01-01 20:44:10,904 - INFO - Scraping URL 2/61: https://www.vivino.com/US/en/gitana-lupi-rezerva/w/1468452?year=2017&price_id=33488306
+2025-01-01 20:44:21,960 - INFO - No 'More' button found or unable to click it.
+2025-01-01 20:44:21,971 - INFO - Rating element found.
+2025-01-01 20:44:22,184 - INFO - Finished scraping URL 2/61.
+
+2025-01-01 20:44:22,184 - INFO - Scraping URL 3/61: https://www.vivino.com/US/en/vina-cobos-vinculum-malbec/w/9885443?year=2018&price_id=36095249
+2025-01-01 20:44:33,282 - INFO - No 'More' button found or unable to click it.
+2025-01-01 20:44:33,298 - INFO - Rating element found.
+2025-01-01 20:44:33,459 - INFO - Finished scraping URL 3/61.
+
+2025-01-01 20:44:33,460 - INFO - Scraping URL 4/61: https://www.vivino.com/US/en/bodegas-ateca-atteca-armas-garnacha-old-vines/w/1204799?year=2021&price_id=37033652
+2025-01-01 20:44:45,092 - INFO - No 'More' button found or unable to click it.
+2025-01-01 20:44:45,109 - INFO - Rating element found.
+2025-01-01 20:44:45,317 - INFO - Finished scraping URL 4/61.
+
+2025-01-01 20:44:45,317 - INFO - Scraping URL 5/61: https://www.vivino.com/US/en/gitana-saperavi/w/3783366?year=2018&price_id=37585269
+2025-01-01 20:44:56,371 - INFO - No 'More' button found or unable to click it.
+2025-01-01 20:44:56,385 - INFO - Rating element found.
+2025-01-01 20:44:56,497 - INFO - Finished scraping URL 5/61.
+
+2025-01-01 20:44:56,498 - INFO - Scraping URL 6/61: https://www.vivino.com/US/en/la-marca-prosecco/w/1126336?price_id=22266257
+2025-01-01 20:45:08,984 - INFO - No 'More' button found or unable to click it.
+2025-01-01 20:45:09,002 - INFO - Rating element found.
+2025-01-01 20:45:09,211 - INFO - Finished scraping URL 6/61.
+
+2025-01-01 20:45:09,212 - INFO - Scraping URL 7/61: https://www.vivino.com/US/en/felix-solis-mucho-mas-tinto/w/6266660?year=2021&price_id=35912068
+2025-01-01 20:45:20,676 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:13:44,765 - INFO - Safari WebDriver initialized successfully.
+2025-01-01 21:13:44,767 - INFO - Scraping URL 1/71: https://www.vivino.com/US/en/valduero-bodegas-y-vinedo-ribera-del-duero-una-cepa-i-ribera-del-duero/w/1218067?year=2019&price_id=36328392
+2025-01-01 21:13:57,076 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:13:57,084 - INFO - Rating element found.
+2025-01-01 21:13:57,379 - INFO - Finished scraping URL 1/71.
+
+2025-01-01 21:13:57,379 - INFO - Scraping URL 2/71: https://www.vivino.com/US/en/venus-la-universal-dido-la-solucio-rosa/w/5479963?year=2021&price_id=33280628
+2025-01-01 21:14:08,849 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:14:08,863 - INFO - Rating element found.
+2025-01-01 21:14:09,014 - INFO - Finished scraping URL 2/71.
+
+2025-01-01 21:14:09,015 - INFO - Scraping URL 3/71: https://www.vivino.com/US/en/venus-la-universal-dido-la-solucio-rosa/w/5479963?year=2022&price_id=36564576
+2025-01-01 21:14:20,194 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:14:20,202 - INFO - Rating element found.
+2025-01-01 21:14:20,348 - INFO - Finished scraping URL 3/71.
+
+2025-01-01 21:14:20,349 - INFO - Scraping URL 4/71: https://www.vivino.com/US/en/pares-balta-syrah-radix-rose/w/1750122?year=2021&price_id=36828026
+2025-01-01 21:14:31,604 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:14:31,625 - INFO - Rating element found.
+2025-01-01 21:14:31,782 - INFO - Finished scraping URL 4/71.
+
+2025-01-01 21:14:31,783 - INFO - Scraping URL 5/71: https://www.vivino.com/US/en/mas-candi-con-barbas-y-a-lo-loco/w/7343274?year=2022&price_id=34849464
+2025-01-01 21:14:42,934 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:14:42,951 - INFO - Rating element found.
+2025-01-01 21:14:43,172 - INFO - Finished scraping URL 5/71.
+
+2025-01-01 21:14:43,173 - INFO - Scraping URL 6/71: https://www.vivino.com/US/en/jose-luis-ripa-rosado/w/8643220?year=2019&price_id=35261728
+2025-01-01 21:14:54,510 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:14:54,517 - INFO - Rating element found.
+2025-01-01 21:14:54,654 - INFO - Finished scraping URL 6/71.
+
+2025-01-01 21:14:54,655 - INFO - Scraping URL 7/71: https://www.vivino.com/US/en/bodegas-muga-flor-de-muga-rosado/w/5513425?year=2023&price_id=36619458
+2025-01-01 21:15:05,754 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:15:05,763 - INFO - Rating element found.
+2025-01-01 21:15:05,846 - INFO - Finished scraping URL 7/71.
+
+2025-01-01 21:15:05,847 - INFO - Scraping URL 8/71: https://www.vivino.com/US/en/zudugarai-antxiola-rose/w/5323343?year=2023&price_id=36820182
+2025-01-01 21:15:17,265 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:15:17,272 - INFO - Rating element found.
+2025-01-01 21:15:17,397 - INFO - Finished scraping URL 8/71.
+
+2025-01-01 21:15:17,398 - INFO - Scraping URL 9/71: https://www.vivino.com/US/en/bodegas-muga-flor-de-muga-rosado/w/5513425?year=2022&price_id=33870190
+2025-01-01 21:15:28,544 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:15:28,558 - INFO - Rating element found.
+2025-01-01 21:15:28,688 - INFO - Finished scraping URL 9/71.
+
+2025-01-01 21:15:28,689 - INFO - Scraping URL 10/71: https://www.vivino.com/US/en/gramona-mart-xarel-lo-vermell-penedes/w/5645872?year=2023&price_id=35550321
+2025-01-01 21:15:39,932 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:15:39,937 - INFO - Rating element found.
+2025-01-01 21:15:40,080 - INFO - Finished scraping URL 10/71.
+
+2025-01-01 21:15:40,080 - INFO - Scraping URL 11/71: https://www.vivino.com/US/en/txampian-rose/w/9945105?year=2021&price_id=33637431
+2025-01-01 21:15:51,280 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:15:51,295 - INFO - Rating element found.
+2025-01-01 21:15:51,453 - INFO - Finished scraping URL 11/71.
+
+2025-01-01 21:15:51,454 - INFO - Scraping URL 12/71: https://www.vivino.com/US/en/enate-cabernet-sauvignon-rosado/w/1829739?year=2023&price_id=35624768
+2025-01-01 21:16:03,069 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:16:03,075 - INFO - Rating element found.
+2025-01-01 21:16:03,203 - INFO - Finished scraping URL 12/71.
+
+2025-01-01 21:16:03,204 - INFO - Scraping URL 13/71: https://www.vivino.com/US/en/zestos-rosado-old-vines-garnacha/w/2701702?year=2020&price_id=27918411
+2025-01-01 21:16:14,181 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:16:14,188 - INFO - Rating element found.
+2025-01-01 21:16:14,372 - INFO - Finished scraping URL 13/71.
+
+2025-01-01 21:16:14,372 - INFO - Scraping URL 14/71: https://www.vivino.com/US/en/llurce-rio-madre-rose/w/5217748?year=2021&price_id=31356378
+2025-01-01 21:16:25,536 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:16:25,551 - INFO - Rating element found.
+2025-01-01 21:16:25,699 - INFO - Finished scraping URL 14/71.
+
+2025-01-01 21:16:25,699 - INFO - Scraping URL 15/71: https://www.vivino.com/US/en/llurce-rio-madre-rose/w/5217748?year=2017&price_id=37941815
+2025-01-01 21:16:37,125 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:16:37,138 - INFO - Rating element found.
+2025-01-01 21:16:37,297 - INFO - Finished scraping URL 15/71.
+
+2025-01-01 21:16:37,297 - INFO - Scraping URL 16/71: https://www.vivino.com/US/en/breca-rose-aragon/w/6198820?year=2017&price_id=29691976
+2025-01-01 21:16:48,713 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:16:48,719 - INFO - Rating element found.
+2025-01-01 21:16:48,852 - INFO - Finished scraping URL 16/71.
+
+2025-01-01 21:16:48,853 - INFO - Scraping URL 17/71: https://www.vivino.com/US/en/luzon-coleccion-rosado-jumilla/w/6345503?year=2022&price_id=37517335
+2025-01-01 21:17:00,042 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:17:00,048 - INFO - Rating element found.
+2025-01-01 21:17:00,169 - INFO - Finished scraping URL 17/71.
+
+2025-01-01 21:17:00,169 - INFO - Scraping URL 18/71: https://www.vivino.com/US/en/raul-perez-los-arrotos-del-pendon-rosado/w/9719527?year=2020&price_id=32665206
+2025-01-01 21:17:11,539 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:17:11,546 - INFO - Rating element found.
+2025-01-01 21:17:11,670 - INFO - Finished scraping URL 18/71.
+
+2025-01-01 21:17:11,671 - INFO - Scraping URL 19/71: https://www.vivino.com/US/en/castello-di-bossi-spa-toscana-rosato/w/3791094?year=2016&price_id=29130597
+2025-01-01 21:17:22,766 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:17:22,773 - INFO - Rating element found.
+2025-01-01 21:17:22,947 - INFO - Finished scraping URL 19/71.
+
+2025-01-01 21:17:22,948 - INFO - Scraping URL 20/71: https://www.vivino.com/US/en/stella-rosa-berry-semi-sweet/w/2174127?price_id=26598705
+2025-01-01 21:17:34,454 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:17:34,474 - INFO - Rating element found.
+2025-01-01 21:17:34,589 - INFO - Finished scraping URL 20/71.
+
+2025-01-01 21:17:34,589 - INFO - Scraping URL 21/71: https://www.vivino.com/US/en/confetti-trentino-sweet-pink/w/8012761?price_id=29400911
+2025-01-01 21:17:45,711 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:17:45,726 - INFO - Rating element found.
+2025-01-01 21:17:45,880 - INFO - Finished scraping URL 21/71.
+
+2025-01-01 21:17:45,881 - INFO - Scraping URL 22/71: https://www.vivino.com/US/en/pasqua-vigneti-e-cantine-eleven-minutes-rosato/w/5470821?year=2022&price_id=33968783
+2025-01-01 21:17:57,380 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:17:57,388 - INFO - Rating element found.
+2025-01-01 21:17:57,516 - INFO - Finished scraping URL 22/71.
+
+2025-01-01 21:17:57,516 - INFO - Scraping URL 23/71: https://www.vivino.com/US/en/le-pianelle-al-posto-dei-fiori-rosato/w/2149284?year=2020&price_id=31979268
+2025-01-01 21:18:08,753 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:18:08,771 - INFO - Rating element found.
+2025-01-01 21:18:08,934 - INFO - Finished scraping URL 23/71.
+
+2025-01-01 21:18:08,935 - INFO - Scraping URL 24/71: https://www.vivino.com/US/en/santa-silvana-pinot-grigio-delle-venezie-rose/w/9565703?year=2022&price_id=33599970
+2025-01-01 21:18:20,111 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:18:20,118 - INFO - Rating element found.
+2025-01-01 21:18:20,247 - INFO - Finished scraping URL 24/71.
+
+2025-01-01 21:18:20,248 - INFO - Scraping URL 25/71: https://www.vivino.com/US/en/cote-des-roses-rose/w/3180824?year=2020&price_id=35967541
+2025-01-01 21:18:31,899 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:18:31,911 - INFO - Rating element found.
+2025-01-01 21:18:32,082 - INFO - Finished scraping URL 25/71.
+
+2025-01-01 21:18:32,082 - INFO - Scraping URL 26/71: https://www.vivino.com/US/en/berne-romance-rose/w/1246412?year=2023&price_id=35654894
+2025-01-01 21:18:43,509 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:18:43,523 - INFO - Rating element found.
+2025-01-01 21:18:43,734 - INFO - Finished scraping URL 26/71.
+
+2025-01-01 21:18:43,735 - INFO - Scraping URL 27/71: https://www.vivino.com/US/en/maison-marcel-hearts-rose/w/4365076?year=2021&price_id=29746267
+2025-01-01 21:18:54,948 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:18:54,961 - INFO - Rating element found.
+2025-01-01 21:18:55,132 - INFO - Finished scraping URL 27/71.
+
+2025-01-01 21:18:55,133 - INFO - Scraping URL 28/71: https://www.vivino.com/US/en/charles-bouguey-methode-traditionnelle/w/2549409?price_id=26593670
+2025-01-01 21:19:06,478 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:19:06,489 - INFO - Rating element found.
+2025-01-01 21:19:06,646 - INFO - Finished scraping URL 28/71.
+
+2025-01-01 21:19:06,646 - INFO - Scraping URL 29/71: https://www.vivino.com/US/en/simonet-cuvee-reservee-sparkling-rose-sec/w/11363125?price_id=35496983
+2025-01-01 21:19:17,577 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:19:17,589 - INFO - Rating element found.
+2025-01-01 21:19:17,737 - INFO - Finished scraping URL 29/71.
+
+2025-01-01 21:19:17,737 - INFO - Scraping URL 30/71: https://www.vivino.com/US/en/lucien-albrecht-cremant-d-alsace-brut/w/87815?price_id=36468002
+2025-01-01 21:19:29,866 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:19:29,880 - INFO - Rating element found.
+2025-01-01 21:19:30,054 - INFO - Finished scraping URL 30/71.
+
+2025-01-01 21:19:30,055 - INFO - Scraping URL 31/71: https://www.vivino.com/US/en/chateau-d-arche-a-de-chateau-d-arche-bordeaux-blanc/w/9481643?year=2021&price_id=37060757
+2025-01-01 21:19:41,720 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:19:41,735 - INFO - Rating element found.
+2025-01-01 21:19:41,853 - INFO - Finished scraping URL 31/71.
+
+2025-01-01 21:19:41,854 - INFO - Scraping URL 32/71: https://www.vivino.com/US/en/mary-taylor-pascal-biotteau-anjou-blanc/w/6737349?year=2023&price_id=36419629
+2025-01-01 21:19:53,595 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:19:53,610 - INFO - Rating element found.
+2025-01-01 21:19:53,785 - INFO - Finished scraping URL 32/71.
+
+2025-01-01 21:19:53,786 - INFO - Scraping URL 33/71: https://www.vivino.com/US/en/chateau-nicot-entre-deux-mers/w/1478442?year=2023&price_id=35814409
+2025-01-01 21:20:05,014 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:20:05,033 - INFO - Rating element found.
+2025-01-01 21:20:05,241 - INFO - Finished scraping URL 33/71.
+
+2025-01-01 21:20:05,242 - INFO - Scraping URL 34/71: https://www.vivino.com/US/en/lamothe-bergeron-rives-de-lamothe-haut-medoc/w/3777572?year=2017&price_id=31221848
+2025-01-01 21:20:16,771 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:20:16,782 - INFO - Rating element found.
+2025-01-01 21:20:16,908 - INFO - Finished scraping URL 34/71.
+
+2025-01-01 21:20:16,908 - INFO - Scraping URL 35/71: https://www.vivino.com/US/en/clos-st-antonin-cotes-du-rhone/w/5383943?year=2019&price_id=31534788
+2025-01-01 21:20:28,180 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:20:28,191 - INFO - Rating element found.
+2025-01-01 21:20:28,351 - INFO - Finished scraping URL 35/71.
+
+2025-01-01 21:20:28,352 - INFO - Scraping URL 36/71: https://www.vivino.com/US/en/delas-freres-saint-esprit-cotes-du-rhone/w/14640?year=2021&price_id=36467772
+2025-01-01 21:20:39,881 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:20:39,893 - INFO - Rating element found.
+2025-01-01 21:20:40,072 - INFO - Finished scraping URL 36/71.
+
+2025-01-01 21:20:40,073 - INFO - Scraping URL 37/71: https://www.vivino.com/US/en/henri-bourgeois-sancerre-la-cote-des-monts-damnes/w/17662?year=2022&price_id=37199788
+2025-01-01 21:20:50,969 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:20:50,979 - INFO - Rating element found.
+2025-01-01 21:20:51,150 - INFO - Finished scraping URL 37/71.
+
+2025-01-01 21:20:51,150 - INFO - Scraping URL 38/71: https://www.vivino.com/US/en/andre-bonhomme-vire-clesse-vieilles-vignes/w/1275410?year=2022&price_id=37751023
+2025-01-01 21:21:02,188 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:21:02,199 - INFO - Rating element found.
+2025-01-01 21:21:02,370 - INFO - Finished scraping URL 38/71.
+
+2025-01-01 21:21:02,370 - INFO - Scraping URL 39/71: https://www.vivino.com/US/en/chateau-carbonnieux-pessac-leognan-blanc-grand-cru-classe-de-graves/w/78014?year=2018&price_id=29692090
+2025-01-01 21:21:13,957 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:21:13,969 - INFO - Rating element found.
+2025-01-01 21:21:14,144 - INFO - Finished scraping URL 39/71.
+
+2025-01-01 21:21:14,145 - INFO - Scraping URL 40/71: https://www.vivino.com/US/en/albamar-ceibo-godello-valdeorras/w/6169145?year=2022&price_id=36191822
+2025-01-01 21:21:25,759 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:21:25,772 - INFO - Rating element found.
+2025-01-01 21:21:25,978 - INFO - Finished scraping URL 40/71.
+
+2025-01-01 21:21:25,978 - INFO - Scraping URL 41/71: https://www.vivino.com/US/en/escoda-sanahuja-els-bassots/w/1176629?year=2021&price_id=34911045
+2025-01-01 21:21:37,264 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:21:37,278 - INFO - Rating element found.
+2025-01-01 21:21:37,448 - INFO - Finished scraping URL 41/71.
+
+2025-01-01 21:21:37,448 - INFO - Scraping URL 42/71: https://www.vivino.com/US/en/finca-torremilanos-penalba-lopez-blanco/w/1856091?year=2021&price_id=32042643
+2025-01-01 21:21:48,700 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:21:48,806 - INFO - Rating element found.
+2025-01-01 21:21:48,997 - INFO - Finished scraping URL 42/71.
+
+2025-01-01 21:21:48,997 - INFO - Scraping URL 43/71: https://www.vivino.com/US/en/raventos-i-blanc-blanc-de-blancs-brut-penedes/w/1748985?year=2022&price_id=37895755
+2025-01-01 21:22:00,403 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:22:00,512 - INFO - Rating element found.
+2025-01-01 21:22:00,720 - INFO - Finished scraping URL 43/71.
+
+2025-01-01 21:22:00,720 - INFO - Scraping URL 44/71: https://www.vivino.com/US/en/ameztoi-txakoli-hijo-de-rubentis-extra-brut/w/2651835?year=2016&price_id=35965274
+2025-01-01 21:22:11,577 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:22:11,654 - INFO - Rating element found.
+2025-01-01 21:22:11,856 - INFO - Finished scraping URL 44/71.
+
+2025-01-01 21:22:11,857 - INFO - Scraping URL 45/71: https://www.vivino.com/US/en/elio-perrone-sourgal-moscato-d-asti/w/1134075?year=2022&price_id=34277971
+2025-01-01 21:22:22,726 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:22:22,746 - INFO - Rating element found.
+2025-01-01 21:22:22,953 - INFO - Finished scraping URL 45/71.
+
+2025-01-01 21:22:22,953 - INFO - Scraping URL 46/71: https://www.vivino.com/US/en/la-spinetta-bricco-quaglia-moscato-d-asti/w/15162?year=2021&price_id=33830947
+2025-01-01 21:22:34,401 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:22:34,419 - INFO - Rating element found.
+2025-01-01 21:22:34,665 - INFO - Finished scraping URL 46/71.
+
+2025-01-01 21:22:34,666 - INFO - Scraping URL 47/71: https://www.vivino.com/US/en/bisson-marca-trevigiana-glera-frizzante/w/1459467?year=2023&price_id=35431842
+2025-01-01 21:22:45,781 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:22:45,811 - INFO - Rating element found.
+2025-01-01 21:22:46,006 - INFO - Finished scraping URL 47/71.
+
+2025-01-01 21:22:46,006 - INFO - Scraping URL 48/71: https://www.vivino.com/US/en/furlani-sui-lieviti-alpino-macerato/w/5388724?year=2021&price_id=34140726
+2025-01-01 21:22:58,121 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:22:58,138 - INFO - Rating element found.
+2025-01-01 21:22:58,333 - INFO - Finished scraping URL 48/71.
+
+2025-01-01 21:22:58,333 - INFO - Scraping URL 49/71: https://www.vivino.com/US/en/marenco-129357-pineto-brachetto-d-acqui/w/1188811?year=2022&price_id=37912541
+2025-01-01 21:23:09,299 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:23:09,316 - INFO - Rating element found.
+2025-01-01 21:23:09,509 - INFO - Finished scraping URL 49/71.
+
+2025-01-01 21:23:09,509 - INFO - Scraping URL 50/71: https://www.vivino.com/US/en/daniele-reale-la-matota/w/5578430?year=2022&price_id=31175883
+2025-01-01 21:23:20,860 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:23:20,878 - INFO - Rating element found.
+2025-01-01 21:23:21,067 - INFO - Finished scraping URL 50/71.
+
+2025-01-01 21:23:21,068 - INFO - Scraping URL 51/71: https://www.vivino.com/US/en/domaine-de-lispaul-pouilly-fume/w/8035653?year=2023&price_id=36615470
+2025-01-01 21:23:32,813 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:23:32,834 - INFO - Rating element found.
+2025-01-01 21:23:32,982 - INFO - Finished scraping URL 51/71.
+
+2025-01-01 21:23:32,982 - INFO - Scraping URL 52/71: https://www.vivino.com/US/en/chateau-d-arche-a-de-chateau-d-arche-bordeaux-blanc/w/9481643?year=2021&price_id=37060757
+2025-01-01 21:23:44,513 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:23:44,531 - INFO - Rating element found.
+2025-01-01 21:23:44,704 - INFO - Finished scraping URL 52/71.
+
+2025-01-01 21:23:44,704 - INFO - Scraping URL 53/71: https://www.vivino.com/US/en/calvimont-graves-blanc/w/5219612?year=2023&price_id=37060739
+2025-01-01 21:23:56,452 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:23:56,634 - INFO - Rating element found.
+2025-01-01 21:23:56,792 - INFO - Finished scraping URL 53/71.
+
+2025-01-01 21:23:56,793 - INFO - Scraping URL 54/71: https://www.vivino.com/US/en/luis-perez-el-corregidor-de-carrascal/w/12234254?year=2020&price_id=37949562
+2025-01-01 21:24:07,743 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:24:07,771 - INFO - Rating element found.
+2025-01-01 21:24:08,028 - INFO - Finished scraping URL 54/71.
+
+2025-01-01 21:24:08,028 - INFO - Scraping URL 55/71: https://www.vivino.com/US/en/es-bermejo-listan-rosado/w/2219042?year=2023&price_id=35378644
+2025-01-01 21:24:19,075 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:24:19,277 - INFO - Rating element found.
+2025-01-01 21:24:19,477 - INFO - Finished scraping URL 55/71.
+
+2025-01-01 21:24:19,478 - INFO - Scraping URL 56/71: https://www.vivino.com/US/en/vie-vite-extraordinaire-cotes-de-provence-rose/w/1734332?year=2021&price_id=28867286
+2025-01-01 21:24:30,912 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:24:31,000 - INFO - Rating element found.
+2025-01-01 21:24:31,201 - INFO - Finished scraping URL 56/71.
+
+2025-01-01 21:24:31,201 - INFO - Scraping URL 57/71: https://www.vivino.com/US/en/altaneve-rose/w/2675574?price_id=34641838
+2025-01-01 21:24:42,208 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:24:42,274 - INFO - Rating element found.
+2025-01-01 21:24:42,453 - INFO - Finished scraping URL 57/71.
+
+2025-01-01 21:24:42,453 - INFO - Scraping URL 58/71: https://www.vivino.com/US/en/vinyes-singulars-clarete-rosat/w/8208317?year=2020&price_id=34809264
+2025-01-01 21:24:55,277 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:24:55,296 - INFO - Rating element found.
+2025-01-01 21:24:55,486 - INFO - Finished scraping URL 58/71.
+
+2025-01-01 21:24:55,486 - INFO - Scraping URL 59/71: https://www.vivino.com/US/en/tintero-elvio-sori-gramella-moscato-d-asti/w/1868712?year=2023&price_id=36868357
+2025-01-01 21:25:06,521 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:25:06,549 - INFO - Rating element found.
+2025-01-01 21:25:06,849 - INFO - Finished scraping URL 59/71.
+
+2025-01-01 21:25:06,850 - INFO - Scraping URL 60/71: https://www.vivino.com/US/en/ceretto-moscato-d-asti/w/6445149?year=2023&price_id=37697028
+2025-01-01 21:25:20,052 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:25:20,062 - INFO - Rating element found.
+2025-01-01 21:25:20,438 - INFO - Finished scraping URL 60/71.
+
+2025-01-01 21:25:20,438 - INFO - Scraping URL 61/71: https://www.vivino.com/US/en/cotes-de-femme-cotes-de-femme/w/8278073?year=2022&price_id=33283846
+2025-01-01 21:25:32,217 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:25:32,357 - INFO - Rating element found.
+2025-01-01 21:25:32,574 - INFO - Finished scraping URL 61/71.
+
+2025-01-01 21:25:32,574 - INFO - Scraping URL 62/71: https://www.vivino.com/US/en/caposaldo-moscato/w/1143071?price_id=21895811
+2025-01-01 21:25:43,883 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:25:43,998 - INFO - Rating element found.
+2025-01-01 21:25:44,167 - INFO - Finished scraping URL 62/71.
+
+2025-01-01 21:25:44,168 - INFO - Scraping URL 63/71: https://www.vivino.com/US/en/bartenura-moscato-d-asti/w/7337408?year=2021&price_id=35259993
+2025-01-01 21:25:57,045 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:25:57,103 - INFO - Rating element found.
+2025-01-01 21:25:57,306 - INFO - Finished scraping URL 63/71.
+
+2025-01-01 21:25:57,306 - INFO - Scraping URL 64/71: https://www.vivino.com/US/en/chateau-sainte-marguerite-cotes-de-provence-fantastique-rose-cotes-de-provence-rose-wine/w/5809048?year=2023&price_id=37253056
+2025-01-01 21:26:08,158 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:26:08,297 - INFO - Rating element found.
+2025-01-01 21:26:08,493 - INFO - Finished scraping URL 64/71.
+
+2025-01-01 21:26:08,493 - INFO - Scraping URL 65/71: https://www.vivino.com/US/en/ch-l-abbaye-clos-beylesse-cotes-de-provence-rose/w/1180278?year=2023&price_id=36252765
+2025-01-01 21:26:19,567 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:26:19,628 - INFO - Rating element found.
+2025-01-01 21:26:19,756 - INFO - Finished scraping URL 65/71.
+
+2025-01-01 21:26:19,756 - INFO - Scraping URL 66/71: https://www.vivino.com/US/en/it-rosa-moscato-d-asti/w/1132930?year=2022&price_id=35593050
+2025-01-01 21:26:30,730 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:26:30,736 - INFO - Rating element found.
+2025-01-01 21:26:30,860 - INFO - Finished scraping URL 66/71.
+
+2025-01-01 21:26:30,861 - INFO - Scraping URL 67/71: https://www.vivino.com/US/en/cantine-pellegrino-zebo-moscato-terre-siciliane/w/2001185?year=2023&price_id=32033472
+2025-01-01 21:26:42,502 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:26:52,767 - WARNING - Rating element not found.
+2025-01-01 21:26:52,860 - INFO - Finished scraping URL 67/71.
+
+2025-01-01 21:26:52,860 - INFO - Scraping URL 68/71: https://www.vivino.com/US/en/isabelle-garrault-les-grands-monts-sancerre-rose/w/5546784?year=2023&price_id=35698610
+2025-01-01 21:27:04,305 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:27:04,313 - INFO - Rating element found.
+2025-01-01 21:27:04,487 - INFO - Finished scraping URL 68/71.
+
+2025-01-01 21:27:04,488 - INFO - Scraping URL 69/71: https://www.vivino.com/US/en/altaneve-z-prosecco-superiore/w/5143766?year=2023&price_id=34766331
+2025-01-01 21:27:15,478 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:27:25,730 - WARNING - Rating element not found.
+2025-01-01 21:27:25,810 - INFO - Finished scraping URL 69/71.
+
+2025-01-01 21:27:25,811 - INFO - Scraping URL 70/71: https://www.vivino.com/US/en/altaneve-prosecco-superiore/w/2052330?year=2023&price_id=37086713
+2025-01-01 21:27:36,434 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:27:46,698 - WARNING - Rating element not found.
+2025-01-01 21:27:46,772 - INFO - Finished scraping URL 70/71.
+
+2025-01-01 21:27:46,772 - INFO - Scraping URL 71/71: https://www.vivino.com/US/en/colcombet-freres-reserve-privee-brut-eclat-champagne/w/5074155?year=2023&price_id=30176983
+2025-01-01 21:27:57,431 - INFO - No 'More' button found or unable to click it.
+2025-01-01 21:28:07,706 - WARNING - Rating element not found.
+2025-01-01 21:28:07,766 - INFO - Finished scraping URL 71/71.
+
+2025-01-01 21:28:08,009 - INFO - Closed Safari WebDriver.
+2025-01-01 21:28:08,025 - INFO - Loaded existing CSV with 61 rows.
+2025-01-01 21:28:08,027 - INFO - Combined data has 132 rows.
+2025-01-01 21:28:08,033 - INFO - After dropping duplicates, 103 rows remain.
+2025-01-01 21:28:08,041 - INFO - Updated CSV saved to '/Users/jean/Documents/EAGLES/wine_chat/enriched_wine_data_safari.csv'.
+2025-01-01 21:28:08,041 - INFO - Data scraping completed. Check 'enriched_wine_data_safari.csv' for the results.
