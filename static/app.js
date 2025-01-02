@@ -4,7 +4,6 @@ if (!userId) {
   localStorage.setItem("wine_userId", userId);
 }
 
-const serverUrl = "http://127.0.0.1:5001";
 const conversationDiv = document.getElementById("conversation");
 const userInput = document.getElementById("user-input");
 const submitButton = document.getElementById("submit-button");
@@ -57,7 +56,7 @@ function handleSend() {
 
 async function sendChat(text) {
   try {
-    const resp = await fetch(`${serverUrl}/conversation?user_id=${userId}`, {
+    const resp = await fetch(`/conversation?user_id=${userId}`, { // URL relative
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: text })
