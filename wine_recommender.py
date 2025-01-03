@@ -76,7 +76,8 @@ class WineRecommender:
         self.pending_slot = None
         
         # Define the fallback priority order
-        self.fallback_order = ["PriceRange", "AlcoholLevel", "Country", "Color"]
+        # Exclude "PriceRange" from being relaxed
+        self.fallback_order = ["AlcoholLevel", "Country", "Color"]
         
         # Track removed constraints during fallback
         self.removed_constraints = []
@@ -298,7 +299,7 @@ class WineRecommender:
                 # Clean and convert Price column
                 pcol = filt["Price"].astype(str).str.replace('[\\$,€]', '', regex=True).str.replace(',', '')
                 pcol = pd.to_numeric(pcol, errors='coerce')
-                # No need to divide by 100; assume prices are in dollars
+                # Assume prices are in dollars, no need to divide by 100
                 filt["PriceNumeric"] = pcol
                 filt = filt[(filt["PriceNumeric"] >= pmin) & (filt["PriceNumeric"] <= pmax)]
                 print(f"Filtering wines with Price between ${pmin} and ${pmax}: Found {len(filt)} wines.")
@@ -358,6 +359,7 @@ class WineRecommender:
         ]
         
         return "\n".join(rec_lines)
+    
     
 
 
