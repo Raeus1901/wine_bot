@@ -1,20 +1,8 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Jan  2 01:17:41 2025
-
-@author: jean
-"""
-
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-import os
 from flask import Flask, request, jsonify, send_from_directory
+import os
 from wine_recommender import WineRecommender
 
 app = Flask(__name__)
-
 sessions = {}
 CSV_PATH = "enriched_wine_data_safari.csv"
 
@@ -22,7 +10,7 @@ if not os.path.exists(CSV_PATH):
     raise FileNotFoundError(f"{CSV_PATH} not found.")
 
 @app.route("/")
-def index():
+def serve_index():
     return send_from_directory("static", "index.html")
 
 @app.route("/<path:filename>")
@@ -39,20 +27,17 @@ def conversation():
         sessions[user_id] = WineRecommender(CSV_PATH)
 
     recommender = sessions[user_id]
-
     data = request.get_json() or {}
-    msg = data.get("message","").strip()
+    msg = data.get("message", "").strip()
+
     if not msg:
         return jsonify({"error": "Empty message"}), 400
 
-    # If user typed "reset"
     if msg.lower() == "reset":
         recommender.reset()
         return jsonify({"message": "Session reset. Let’s start fresh!", "options": []})
 
-    # Otherwise pass to handle_message
     result = recommender.handle_message(msg)
-    # This is a dict with { "message": <string>, "options": <list of strings> }
     return jsonify(result)
 
 @app.route("/reset", methods=["POST"])
