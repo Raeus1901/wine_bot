@@ -46,18 +46,31 @@ class WineRecommender:
     def __init__(self, csv_path):
         try:
             self.data = pd.read_csv(csv_path)
+            logger.debug(f"CSV file '{csv_path}' loaded successfully.")
         except Exception as e:
             logger.error(f"Failed to read CSV file: {e}")
             raise e
+
+        # Rename 'Colour of Wine' to 'Color' for consistency
+        if "Colour of Wine" in self.data.columns:
+            self.data.rename(columns={"Colour of Wine": "Color"}, inplace=True)
+            logger.debug("Renamed 'Colour of Wine' to 'Color'.")
+        elif "Color" not in self.data.columns:
+            raise ValueError("CSV must contain either 'Color' or 'Colour of Wine' column.")
 
         # Check if necessary columns exist
         required_columns = ["Price", "Color", "Alcohol Level (ABV)", "Country", "Winery", "Name", "Vintage"]
         for column in required_columns:
             if column not in self.data.columns:
                 raise ValueError(f"CSV must contain a '{column}' column.")
+        logger.debug("All required columns are present.")
 
         # Filter out unrealistic ABV values
-        self.data = self.data[pd.to_numeric(self.data["Alcohol Level (ABV)"], errors='coerce').between(5, 20)]
+        self.data["Alcohol Level (ABV)"] = pd.to_numeric(self.data["Alcohol Level (ABV)"], errors='coerce')
+        initial_count = len(self.data)
+        self.data = self.data[self.data["Alcohol Level (ABV)"].between(5, 20)]
+        filtered_count = len(self.data)
+        logger.debug(f"Filtered out {initial_count - filtered_count} entries with unrealistic ABV values.")
 
         # Initialize steps
         self.steps = [
@@ -112,21 +125,21 @@ class WineRecommender:
     def handle_message(self, user_text):
         """Main logic to handle user messages."""
         user_text = user_text.strip()
-        logger.debug(f"Handling message: {user_text}")
+        logger.debug(f"Handling message: '{user_text}'")
 
         # 1) Handle pending slot if any
         if self.pending_slot:
             validation = self.validate_slot_choice(user_text, self.pending_slot)
             if not validation["valid"]:
                 step_info = self.get_step_by_key(self.pending_slot)
-                logger.debug(f"Invalid input for {self.pending_slot}: {user_text}")
+                logger.debug(f"Invalid input for '{self.pending_slot}': '{user_text}'")
                 return {
                     "message": validation["error"],
                     "options": step_info["options"]
                 }
             else:
                 self.criteria[self.pending_slot] = validation["choice"]
-                logger.debug(f"Set {self.pending_slot} to {validation['choice']}")
+                logger.debug(f"Set '{self.pending_slot}' to '{validation['choice']}'")
                 self.pending_slot = None
 
         # 2) Parse free text to fill any slots
@@ -148,14 +161,14 @@ class WineRecommender:
             }
 
         # 5) If not all slots are filled, ask for the next unfilled slot
-        if filled_count < 4:
-            next_slot = self.find_unfilled_slot()
-            if next_slot:
-                self.pending_slot = next_slot["key"]
-                logger.debug(f"Prompting next slot: {next_slot['key']}")
+        if filled_count < len(self.criteria):
+            next_step = self.find_unfilled_slot()
+            if next_step:
+                self.pending_slot = next_step["key"]
+                logger.debug(f"Prompting next slot: '{next_step['key']}'")
                 return {
-                    "message": f"Got it. {next_slot['question']}",
-                    "options": next_slot["options"]
+                    "message": f"Got it. {next_step['question']}",
+                    "options": next_step["options"]
                 }
 
         # 6) If all slots are filled, attempt to filter and recommend
@@ -194,51 +207,51 @@ class WineRecommender:
     def parse_free_text(self, user_text):
         """Parse free-form user input to fill in any criteria."""
         text = user_text.lower()
-        logger.debug(f"Parsing free text: {text}")
+        logger.debug(f"Parsing free text: '{text}'")
 
         # Attempt to fill AlcoholLevel
         if self.criteria["AlcoholLevel"] is None:
             abv_guess = interpret_strength(user_text)
             if abv_guess:
                 self.criteria["AlcoholLevel"] = abv_guess
-                logger.debug(f"AlcoholLevel set to {abv_guess}")
+                logger.debug(f"AlcoholLevel set to '{abv_guess}'")
 
         # Attempt to fill Color
         if self.criteria["Color"] is None:
             if "red" in text:
                 self.criteria["Color"] = "Red"
-                logger.debug("Color set to Red")
+                logger.debug("Color set to 'Red'")
             elif "white" in text:
                 self.criteria["Color"] = "White"
-                logger.debug("Color set to White")
+                logger.debug("Color set to 'White'")
             elif "rosé" in text or "rose" in text:
                 self.criteria["Color"] = "Rosé"
-                logger.debug("Color set to Rosé")
+                logger.debug("Color set to 'Rosé'")
             elif "sparkling" in text:
                 self.criteria["Color"] = "Sparkling"
-                logger.debug("Color set to Sparkling")
+                logger.debug("Color set to 'Sparkling'")
 
         # Attempt to fill Country
         if self.criteria["Country"] is None:
             if "france" in text:
                 self.criteria["Country"] = "France"
-                logger.debug("Country set to France")
+                logger.debug("Country set to 'France'")
             elif "spain" in text:
                 self.criteria["Country"] = "Spain"
-                logger.debug("Country set to Spain")
+                logger.debug("Country set to 'Spain'")
             elif "italy" in text:
                 self.criteria["Country"] = "Italy"
-                logger.debug("Country set to Italy")
+                logger.debug("Country set to 'Italy'")
             elif "other" in text or "others" in text:
                 self.criteria["Country"] = "Others"
-                logger.debug("Country set to Others")
+                logger.debug("Country set to 'Others'")
 
         # Attempt to fill PriceRange
         if self.criteria["PriceRange"] is None:
             for opt in ["$10-20", "$20-30", "$30-40", "$40-50"]:
                 if opt.lower() in text:
                     self.criteria["PriceRange"] = opt
-                    logger.debug(f"PriceRange set to {opt}")
+                    logger.debug(f"PriceRange set to '{opt}'")
                     break
             # Handle "under X" price
             match = re.search(r"under\s+\$?(\d+)", text)
@@ -252,13 +265,13 @@ class WineRecommender:
                     self.criteria["PriceRange"] = "$30-40"
                 else:
                     self.criteria["PriceRange"] = "$40-50"
-                logger.debug(f"PriceRange set to based on 'under X': {self.criteria['PriceRange']}")
+                logger.debug(f"PriceRange set to based on 'under X': '{self.criteria['PriceRange']}'")
 
     def validate_slot_choice(self, user_text, slot_key):
         """Validate user input for a specific slot."""
         step_info = self.get_step_by_key(slot_key)
         if not step_info:
-            logger.error(f"No step found for slot key: {slot_key}")
+            logger.error(f"No step found for slot key: '{slot_key}'")
             return {"valid": False, "error": "Internal error. Please try again later."}
 
         valid_opts = step_info["options"]
@@ -269,7 +282,7 @@ class WineRecommender:
         if t.isdigit():
             idx = int(t) - 1
             if 0 <= idx < len(valid_opts):
-                logger.debug(f"User selected option {idx + 1}: {valid_opts[idx]}")
+                logger.debug(f"User selected option {idx + 1}: '{valid_opts[idx]}'")
                 return {"valid": True, "choice": valid_opts[idx]}
             else:
                 return {"valid": False, "error": f"Invalid choice. Please choose one of: {', '.join(valid_opts)}"}
@@ -277,13 +290,13 @@ class WineRecommender:
         # Handle direct match
         if t in lower_opts:
             i = lower_opts.index(t)
-            logger.debug(f"User selected option: {valid_opts[i]}")
+            logger.debug(f"User selected option: '{valid_opts[i]}'")
             return {"valid": True, "choice": valid_opts[i]}
 
         # Handle partial matches or common misspellings
         for opt in valid_opts:
             if opt.lower().startswith(t):
-                logger.debug(f"User partially matched option: {opt}")
+                logger.debug(f"User partially matched option: '{opt}'")
                 return {"valid": True, "choice": opt}
 
         # If no valid option matched
@@ -317,17 +330,18 @@ class WineRecommender:
         color = c["Color"]
         if color:
             filt = filt[filt["Color"].str.lower() == color.lower()]
+            logger.debug(f"Filtered by Color: '{color}' - {len(filt)} wines found.")
 
         # Filter by Alcohol Level
         abv_choice = c["AlcoholLevel"]
         if abv_choice:
-            abv_range = abv_choice.replace('%','').split('-')
+            abv_range = abv_choice.replace('%', '').split('-')
             if len(abv_range) == 2:
                 try:
                     abv_min, abv_max = float(abv_range[0]), float(abv_range[1])
-                    filt["Alcohol Level (ABV)"] = pd.to_numeric(filt["Alcohol Level (ABV)"], errors='coerce').fillna(-1)
-                    filt = filt[(filt["Alcohol Level (ABV)"] >= abv_min) & 
+                    filt = filt[(filt["Alcohol Level (ABV)"] >= abv_min) &
                                 (filt["Alcohol Level (ABV)"] <= abv_max)]
+                    logger.debug(f"Filtered by Alcohol Level: '{abv_choice}' - {len(filt)} wines found.")
                 except ValueError:
                     logger.error(f"Invalid ABV range: {abv_range}")
                     return pd.DataFrame()
@@ -337,13 +351,15 @@ class WineRecommender:
         if ctry:
             if ctry.lower() == "others":
                 filt = filt[~filt["Country"].str.lower().isin(["france", "spain", "italy"])]
+                logger.debug(f"Filtered by Country: 'Others' - {len(filt)} wines found.")
             else:
                 filt = filt[filt["Country"].str.lower() == ctry.lower()]
+                logger.debug(f"Filtered by Country: '{ctry}' - {len(filt)} wines found.")
 
         # Filter by Price Range
         price = c["PriceRange"]
         if price:
-            prange = price.replace('$','').split('-')
+            prange = price.replace('$', '').split('-')
             if len(prange) == 2:
                 try:
                     pmin, pmax = float(prange[0]), float(prange[1])
@@ -352,7 +368,7 @@ class WineRecommender:
                     pcol = pd.to_numeric(pcol, errors='coerce')
                     filt["PriceNumeric"] = pcol
                     filt = filt[(filt["PriceNumeric"] >= pmin) & (filt["PriceNumeric"] <= pmax)]
-                    logger.debug(f"Filtering wines with Price between ${pmin} and ${pmax}: Found {len(filt)} wines.")
+                    logger.debug(f"Filtered by Price Range: '{price}' - {len(filt)} wines found.")
                 except ValueError:
                     logger.error(f"Invalid Price range: {prange}")
                     return pd.DataFrame()
@@ -450,7 +466,7 @@ class WineRecommender:
         # Validate and format alcohol level
         try:
             abv_float = float(abv)
-            if abv_float > 20:  # Assuming no wine has >20% ABV
+            if abv_float < 5 or abv_float > 20:
                 abv = "N/A"
         except:
             abv = "N/A"
@@ -470,6 +486,7 @@ class WineRecommender:
         )
 
         return rec_text
+
 
     
     
