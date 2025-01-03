@@ -265,7 +265,7 @@ class WineRecommender:
                     self.criteria["PriceRange"] = "$30-40"
                 else:
                     self.criteria["PriceRange"] = "$40-50"
-                logger.debug(f"PriceRange set to based on 'under X': '{self.criteria['PriceRange']}'")
+                logger.debug(f"PriceRange set based on 'under X': '{self.criteria['PriceRange']}'")
 
     def validate_slot_choice(self, user_text, slot_key):
         """Validate user input for a specific slot."""

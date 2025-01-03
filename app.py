@@ -63,10 +63,17 @@ def conversation():
 @app.route("/reset", methods=["POST"])
 def reset():
     user_id = request.args.get("user_id")
+    if not user_id:
+        logger.error("Missing 'user_id' in reset request.")
+        return jsonify({"error": "Missing user_id"}), 400
+
     if user_id in sessions:
         sessions[user_id].reset()
         logger.debug(f"Session for user_id '{user_id}' has been reset via /reset endpoint.")
-    return jsonify({"message": "Session reset."})
+        return jsonify({"message": "Session reset."})
+    else:
+        logger.debug(f"No active session found for user_id '{user_id}'.")
+        return jsonify({"message": "No active session to reset."}), 200
 
 if __name__ == "__main__":
     app.run(debug=True, port=5001)
