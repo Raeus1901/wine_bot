@@ -46,9 +46,11 @@ class WineRecommender:
     def __init__(self, csv_path):
         self.data = pd.read_csv(csv_path)
 
-        # Check if 'Price' column exists
-        if "Price" not in self.data.columns:
-            raise ValueError("CSV must contain a 'Price' column.")
+        # Check if necessary columns exist
+        required_columns = ["Price", "Color", "Alcohol Level (ABV)", "Country", "Winery", "Name", "Vintage"]
+        for column in required_columns:
+            if column not in self.data.columns:
+                raise ValueError(f"CSV must contain a '{column}' column.")
 
         self.steps = [
             {
@@ -167,24 +169,52 @@ class WineRecommender:
             # We have at least one match
             # Provide a list of up to 5 recommendations
             recommendations = df_result.head(5)
-            rec_text = "Based on your current preferences, here are some suggestions:\n"
+            rec_text = "Based on your current preferences, here are some suggestions:\n\n"
             for idx, row in recommendations.iterrows():
-                rec_text += f"\n{idx+1}. Winery: {row.get('Winery', 'Unknown Winery')}, {row.get('Country', 'Unknown Country')}\n" \
-                           f"{row.get('Name', 'Unnamed Wine')} {row.get('Vintage', 'N/A')}\n" \
-                           f"{row.get('Alcohol Level (ABV)', 'N/A')}% Alc./vol.\n" \
-                           f"${row.get('Price', 'N/A')}\n"
+                winery = row.get("Winery", "Unknown Winery")
+                country = row.get("Country", "Unknown Country")
+                name = row.get("Name", "Unnamed Wine")
+                vintage = row.get("Vintage", "N/A")
+                abv = row.get("Alcohol Level (ABV)", "N/A")
+                price = row.get("Price", "N/A")
+
+                # Validate and format alcohol level
+                try:
+                    abv_float = float(abv)
+                    if abv_float > 20:  # Assuming no wine has >20% ABV
+                        abv = "N/A"
+                except:
+                    abv = "N/A"
+
+                # Format vintage if it's numeric
+                if pd.notnull(vintage):
+                    try:
+                        vintage = int(vintage)
+                    except ValueError:
+                        vintage = vintage
+
+                rec_text += (
+                    f"{idx + 1}. Winery: {winery}, {country}\n"
+                    f"   {name} {vintage}\n"
+                    f"   {abv}% Alc./vol.\n"
+                    f"   ${price}\n\n"
+                )
 
             # Add further filtering options
-            rec_text += "\nYou can further refine your selection based on Appellation or Taste.\n" \
-                        "For example:\n" \
-                        "- Appellation: Blend, Merlot, Bordeaux, Pinot (for Red) or Blend, Sauvignon, Bourgogne (for White)\n" \
-                        "- Taste: Fruity, Dry, Sharp\n" \
-                        "Please let me know if you'd like to apply any additional filters."
+            rec_text += (
+                "You can further refine your selection based on Appellation or Taste.\n"
+                "For example:\n"
+                "- **Appellation**:\n"
+                "   - *Red*: Blend, Merlot, Bordeaux, Pinot\n"
+                "   - *White*: Blend, Sauvignon, Bourgogne\n"
+                "- **Taste**: Fruity, Dry, Sharp\n\n"
+                "Please let me know if you'd like to apply any additional filters."
+            )
 
             # If constraints were relaxed, inform the user
             if self.removed_constraints:
                 removed_str = ", ".join(self.removed_constraints)
-                rec_text += f"\n\nNote: We relaxed the following constraints to find these matches: {removed_str}."
+                rec_text += f"\n\n**Note**: We relaxed the following constraints to find these matches: {removed_str}."
                 logger.debug(f"Relaxed constraints: {removed_str}")
 
             logger.debug(f"Recommendations:\n{rec_text}")
@@ -314,10 +344,7 @@ class WineRecommender:
         # Filter by Color
         color = c["Color"]
         if color:
-            if "Colour of Wine" in filt.columns:
-                filt = filt[filt["Colour of Wine"].str.lower().str.contains(color.lower(), na=False)]
-            elif "Color" in filt.columns:
-                filt = filt[filt["Color"].str.lower().str.contains(color.lower(), na=False)]
+            filt = filt[filt["Color"].str.lower() == color.lower()]
 
         # Filter by Alcohol Level
         abv_choice = c["AlcoholLevel"]
@@ -325,10 +352,9 @@ class WineRecommender:
             abv_range = abv_choice.replace('%','').split('-')
             if len(abv_range) == 2:
                 abv_min, abv_max = float(abv_range[0]), float(abv_range[1])
-                if "Alcohol Level (ABV)" in filt.columns:
-                    filt["Alcohol Level (ABV)"] = pd.to_numeric(filt["Alcohol Level (ABV)"], errors='coerce').fillna(-1)
-                    filt = filt[(filt["Alcohol Level (ABV)"] >= abv_min) & 
-                                (filt["Alcohol Level (ABV)"] <= abv_max)]
+                filt["Alcohol Level (ABV)"] = pd.to_numeric(filt["Alcohol Level (ABV)"], errors='coerce').fillna(-1)
+                filt = filt[(filt["Alcohol Level (ABV)"] >= abv_min) & 
+                            (filt["Alcohol Level (ABV)"] <= abv_max)]
 
         # Filter by Country
         ctry = c["Country"]
@@ -347,7 +373,6 @@ class WineRecommender:
                 # Clean and convert Price column
                 pcol = filt["Price"].astype(str).str.replace('[\\$,€]', '', regex=True).str.replace(',', '')
                 pcol = pd.to_numeric(pcol, errors='coerce')
-                # Assume prices are in dollars, no need to divide by 100
                 filt["PriceNumeric"] = pcol
                 filt = filt[(filt["PriceNumeric"] >= pmin) & (filt["PriceNumeric"] <= pmax)]
                 logger.debug(f"Filtering wines with Price between ${pmin} and ${pmax}: Found {len(filt)} wines.")
@@ -393,6 +418,14 @@ class WineRecommender:
         price = row.get("Price", "N/A")
         country = row.get("Country", "Unknown Country")
 
+        # Validate and format alcohol level
+        try:
+            abv_float = float(abv)
+            if abv_float > 20:  # Assuming no wine has >20% ABV
+                abv = "N/A"
+        except:
+            abv = "N/A"
+
         # Format vintage if it's numeric
         if pd.notnull(vintage):
             try:
@@ -400,15 +433,14 @@ class WineRecommender:
             except ValueError:
                 vintage = vintage
 
-        rec_lines = [
-            "Based on your current preferences, here are some suggestions:",
-            f"Winery: {winery}, {country}",
-            f"{name} {vintage}".strip(),
-            f"{abv}% Alc./vol.",
-            f"${price}"
-        ]
+        rec_text = (
+            f"Winery: {winery}, {country}\n"
+            f"{name} {vintage}\n"
+            f"{abv}% Alc./vol.\n"
+            f"${price}\n"
+        )
 
-        return "\n".join(rec_lines)
+        return rec_text
 
     
     
