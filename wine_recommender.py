@@ -13,7 +13,7 @@ def interpret_strength(user_text):
     or None if nothing matched.
     """
     text = user_text.lower()
-    
+
     # 1) Handle "less than X%"
     match_less = re.search(r"less\s+than\s+(\d+)%", text)
     if match_less:
@@ -26,7 +26,7 @@ def interpret_strength(user_text):
             return "13-14%"
         else:
             return "14-15%"
-        
+
     # 2) Handle descriptive terms
     if any(word in text for word in ["strong", "heavy", "high"]):
         return "14-15%"
@@ -34,22 +34,22 @@ def interpret_strength(user_text):
         return "11-12%"
     if "medium" in text:
         return "12-13%"
-    
+
     # 3) Direct ABV input like "13-14%"
     match_abv = re.search(r"(\d{1,2}-\d{1,2}%)", text)
     if match_abv:
         return match_abv.group(1)
-    
+
     return None
 
 class WineRecommender:
     def __init__(self, csv_path):
         self.data = pd.read_csv(csv_path)
-        
+
         # Check if 'Price' column exists
         if "Price" not in self.data.columns:
             raise ValueError("CSV must contain a 'Price' column.")
-            
+
         self.steps = [
             {
                 "key": "Color",
@@ -72,7 +72,7 @@ class WineRecommender:
                 "options": ["$10-20", "$20-30", "$30-40", "$40-50"]
             },
         ]
-        
+
         # Initialize criteria with all slots as None
         self.criteria = {
             "Color": None,
@@ -80,17 +80,17 @@ class WineRecommender:
             "Country": None,
             "PriceRange": None,
         }
-        
+
         # Track the current slot being prompted
         self.pending_slot = None
-        
+
         # Define the fallback priority order
         # Exclude "PriceRange" from being relaxed
         self.fallback_order = ["AlcoholLevel", "Country", "Color"]
-        
+
         # Track removed constraints during fallback
         self.removed_constraints = []
-        
+
     def reset(self):
         """Reset all user preferences."""
         for slot in self.criteria:
@@ -98,12 +98,12 @@ class WineRecommender:
         self.pending_slot = None
         self.removed_constraints = []
         logger.debug("Session reset.")
-        
+
     def handle_message(self, user_text):
         """Main logic to handle user messages."""
         user_text = user_text.strip()
         logger.debug(f"Handling message: {user_text}")
-        
+
         # 1) Handle pending slot if any
         if self.pending_slot:
             validation = self.validate_slot_choice(user_text, self.pending_slot)
@@ -118,14 +118,14 @@ class WineRecommender:
                 self.criteria[self.pending_slot] = validation["choice"]
                 logger.debug(f"Set {self.pending_slot} to {validation['choice']}")
                 self.pending_slot = None
-                
+
         # 2) Parse free text to fill any slots
         self.parse_free_text(user_text)
-        
+
         # 3) Count filled slots
         filled_count = sum(bool(v) for v in self.criteria.values())
         logger.debug(f"Filled slots: {self.criteria}")
-        
+
         # 4) Determine next action based on filled slots
         if filled_count == 0:
             # Greet and ask the first preference
@@ -133,10 +133,10 @@ class WineRecommender:
             self.pending_slot = first_step["key"]
             logger.debug("No slots filled. Prompting first question.")
             return {
-                "message": "Hello! Let's start with your preference.\n" + first_step["question"],
+                "message": "Hi! How can I assist you today?\n" + first_step["question"],
                 "options": first_step["options"]
             }
-        
+
         # 5) If not all slots are filled, ask for the next unfilled slot
         if filled_count < 4:
             next_slot = self.find_unfilled_slot()
@@ -147,11 +147,11 @@ class WineRecommender:
                     "message": f"Got it. {next_slot['question']}",
                     "options": next_slot["options"]
                 }
-            
+
         # 6) If all slots are filled, attempt to filter and recommend
         df_result, removed = self.filter_data_with_fallback(self.data, self.criteria)
         self.removed_constraints = removed
-        
+
         if df_result.empty:
             # No matches even after fallback
             c = self.criteria
@@ -165,32 +165,46 @@ class WineRecommender:
             return {"message": msg, "options": []}
         else:
             # We have at least one match
-            row = df_result.iloc[0]
-            rec_text = self.format_recommendation(row)
-            
+            # Provide a list of up to 5 recommendations
+            recommendations = df_result.head(5)
+            rec_text = "Based on your current preferences, here are some suggestions:\n"
+            for idx, row in recommendations.iterrows():
+                rec_text += f"\n{idx+1}. Winery: {row.get('Winery', 'Unknown Winery')}, {row.get('Country', 'Unknown Country')}\n" \
+                           f"{row.get('Name', 'Unnamed Wine')} {row.get('Vintage', 'N/A')}\n" \
+                           f"{row.get('Alcohol Level (ABV)', 'N/A')}% Alc./vol.\n" \
+                           f"${row.get('Price', 'N/A')}\n"
+
+            # Add further filtering options
+            rec_text += "\nYou can further refine your selection based on Appellation or Taste.\n" \
+                        "For example:\n" \
+                        "- Appellation: Blend, Merlot, Bordeaux, Pinot (for Red) or Blend, Sauvignon, Bourgogne (for White)\n" \
+                        "- Taste: Fruity, Dry, Sharp\n" \
+                        "Please let me know if you'd like to apply any additional filters."
+
+            # If constraints were relaxed, inform the user
             if self.removed_constraints:
                 removed_str = ", ".join(self.removed_constraints)
-                rec_text += f"\n\nNote: We relaxed the following constraints to find this match: {removed_str}."
+                rec_text += f"\n\nNote: We relaxed the following constraints to find these matches: {removed_str}."
                 logger.debug(f"Relaxed constraints: {removed_str}")
-                
-            logger.debug(f"Recommendation: {rec_text}")
+
+            logger.debug(f"Recommendations:\n{rec_text}")
             return {
                 "message": rec_text,
                 "options": []
             }
-        
+
     def parse_free_text(self, user_text):
         """Parse free-form user input to fill in any criteria."""
         text = user_text.lower()
         logger.debug(f"Parsing free text: {text}")
-        
+
         # Attempt to fill AlcoholLevel
         if self.criteria["AlcoholLevel"] is None:
             abv_guess = interpret_strength(user_text)
             if abv_guess:
                 self.criteria["AlcoholLevel"] = abv_guess
                 logger.debug(f"AlcoholLevel set to {abv_guess}")
-                
+
         # Attempt to fill Color
         if self.criteria["Color"] is None:
             if "red" in text:
@@ -205,7 +219,7 @@ class WineRecommender:
             elif "sparkling" in text:
                 self.criteria["Color"] = "Sparkling"
                 logger.debug("Color set to Sparkling")
-                
+
         # Attempt to fill Country
         if self.criteria["Country"] is None:
             if "france" in text:
@@ -220,7 +234,7 @@ class WineRecommender:
             elif "other" in text or "others" in text:
                 self.criteria["Country"] = "Others"
                 logger.debug("Country set to Others")
-                
+
         # Attempt to fill PriceRange
         if self.criteria["PriceRange"] is None:
             for opt in ["$10-20", "$20-30", "$30-40", "$40-50"]:
@@ -241,14 +255,14 @@ class WineRecommender:
                 else:
                     self.criteria["PriceRange"] = "$40-50"
                 logger.debug(f"PriceRange set to based on 'under X': {self.criteria['PriceRange']}")
-                
+
     def validate_slot_choice(self, user_text, slot_key):
         """Validate user input for a specific slot."""
         step_info = self.get_step_by_key(slot_key)
         valid_opts = step_info["options"]
         lower_opts = [opt.lower() for opt in valid_opts]
         t = user_text.lower().strip()
-        
+
         # Handle numerical input (e.g., "1" for first option)
         if t.isdigit():
             idx = int(t) - 1
@@ -257,46 +271,46 @@ class WineRecommender:
                 return {"valid": True, "choice": valid_opts[idx]}
             else:
                 return {"valid": False, "error": f"Invalid choice. Please choose one of: {', '.join(valid_opts)}"}
-            
+
         # Handle direct match
         if t in lower_opts:
             i = lower_opts.index(t)
             logger.debug(f"User selected option: {valid_opts[i]}")
             return {"valid": True, "choice": valid_opts[i]}
-        
+
         # Handle partial matches or common misspellings
         for opt in valid_opts:
             if opt.lower().startswith(t):
                 logger.debug(f"User partially matched option: {opt}")
                 return {"valid": True, "choice": opt}
-            
+
         # If no valid option matched
         return {
             "valid": False,
             "error": f"I didn't understand. Please choose one of: {', '.join(valid_opts)}"
         }
-    
+
     def get_step_by_key(self, slot_key):
         """Retrieve step information based on slot key."""
         for s in self.steps:
             if s["key"] == slot_key:
                 return s
         return None
-    
+
     def find_unfilled_slot(self):
         """Find the next unfilled slot based on the defined order."""
         for step in self.steps:
             if self.criteria[step["key"]] is None:
                 return step
         return None
-    
+
     # -------------------------------------------------------------------------
     # Filtering logic
     # -------------------------------------------------------------------------
     def strict_filter_data(self, df, c):
         """Apply all current criteria to filter the DataFrame."""
         filt = df.copy()
-        
+
         # Filter by Color
         color = c["Color"]
         if color:
@@ -304,7 +318,7 @@ class WineRecommender:
                 filt = filt[filt["Colour of Wine"].str.lower().str.contains(color.lower(), na=False)]
             elif "Color" in filt.columns:
                 filt = filt[filt["Color"].str.lower().str.contains(color.lower(), na=False)]
-                
+
         # Filter by Alcohol Level
         abv_choice = c["AlcoholLevel"]
         if abv_choice:
@@ -315,7 +329,7 @@ class WineRecommender:
                     filt["Alcohol Level (ABV)"] = pd.to_numeric(filt["Alcohol Level (ABV)"], errors='coerce').fillna(-1)
                     filt = filt[(filt["Alcohol Level (ABV)"] >= abv_min) & 
                                 (filt["Alcohol Level (ABV)"] <= abv_max)]
-                    
+
         # Filter by Country
         ctry = c["Country"]
         if ctry:
@@ -323,7 +337,7 @@ class WineRecommender:
                 filt = filt[~filt["Country"].str.lower().isin(["france", "spain", "italy"])]
             else:
                 filt = filt[filt["Country"].str.lower() == ctry.lower()]
-                
+
         # Filter by Price Range
         price = c["PriceRange"]
         if price:
@@ -337,9 +351,9 @@ class WineRecommender:
                 filt["PriceNumeric"] = pcol
                 filt = filt[(filt["PriceNumeric"] >= pmin) & (filt["PriceNumeric"] <= pmax)]
                 logger.debug(f"Filtering wines with Price between ${pmin} and ${pmax}: Found {len(filt)} wines.")
-                
+
         return filt
-    
+
     def filter_data_with_fallback(self, df, c):
         """
         Attempt to filter data with all criteria.
@@ -351,11 +365,11 @@ class WineRecommender:
         if not df_strict.empty:
             logger.debug("Strict filtering successful.")
             return df_strict, []
-        
+
         # 2) Attempt fallback by removing constraints in fallback_order
         temp_criteria = c.copy()
         removed = []
-        
+
         for slot in self.fallback_order:
             if temp_criteria[slot] is not None:
                 # Remove this constraint temporarily
@@ -365,11 +379,11 @@ class WineRecommender:
                 if not df_partial.empty:
                     logger.debug(f"Fallback: Removed '{slot}' constraint to find matches.")
                     return df_partial, removed
-                
+
         # 3) No matches found even after fallback
         logger.debug("No matches found after fallback.")
         return pd.DataFrame(), removed
-    
+
     def format_recommendation(self, row):
         """Format the recommendation message based on the DataFrame row."""
         winery = row.get("Winery", "Unknown Winery")
@@ -378,22 +392,23 @@ class WineRecommender:
         abv = row.get("Alcohol Level (ABV)", "N/A")
         price = row.get("Price", "N/A")
         country = row.get("Country", "Unknown Country")
-        
+
         # Format vintage if it's numeric
         if pd.notnull(vintage):
             try:
                 vintage = int(vintage)
             except ValueError:
                 vintage = vintage
-                
+
         rec_lines = [
-            "Based on your current preferences, here's a suggestion:",
+            "Based on your current preferences, here are some suggestions:",
             f"Winery: {winery}, {country}",
             f"{name} {vintage}".strip(),
             f"{abv}% Alc./vol.",
             f"${price}"
         ]
-        
+
         return "\n".join(rec_lines)
+
     
     
