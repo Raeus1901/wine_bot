@@ -1,10 +1,15 @@
 from flask import Flask, request, jsonify, send_from_directory
 import os
 from wine_recommender import WineRecommender
+import logging
 
 app = Flask(__name__)
 sessions = {}
 CSV_PATH = "enriched_wine_data_safari.csv"
+
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 if not os.path.exists(CSV_PATH):
     raise FileNotFoundError(f"{CSV_PATH} not found.")
@@ -24,7 +29,11 @@ def conversation():
         return jsonify({"error": "Missing user_id"}), 400
 
     if user_id not in sessions:
-        sessions[user_id] = WineRecommender(CSV_PATH)
+        try:
+            sessions[user_id] = WineRecommender(CSV_PATH)
+        except Exception as e:
+            logger.error(f"Failed to initialize recommender: {e}")
+            return jsonify({"error": f"Failed to initialize recommender: {e}"}), 500
 
     recommender = sessions[user_id]
     data = request.get_json() or {}
@@ -37,7 +46,12 @@ def conversation():
         recommender.reset()
         return jsonify({"message": "Session reset. Let’s start fresh!", "options": []})
 
-    result = recommender.handle_message(msg)
+    try:
+        result = recommender.handle_message(msg)
+    except Exception as e:
+        logger.error(f"Error handling message: {e}")
+        return jsonify({"error": "An error occurred while processing your request."}), 500
+
     return jsonify(result)
 
 @app.route("/reset", methods=["POST"])

@@ -44,7 +44,11 @@ def interpret_strength(user_text):
 
 class WineRecommender:
     def __init__(self, csv_path):
-        self.data = pd.read_csv(csv_path)
+        try:
+            self.data = pd.read_csv(csv_path)
+        except Exception as e:
+            logger.error(f"Failed to read CSV file: {e}")
+            raise e
 
         # Check if necessary columns exist
         required_columns = ["Price", "Color", "Alcohol Level (ABV)", "Country", "Winery", "Name", "Vintage"]
@@ -52,6 +56,10 @@ class WineRecommender:
             if column not in self.data.columns:
                 raise ValueError(f"CSV must contain a '{column}' column.")
 
+        # Filter out unrealistic ABV values
+        self.data = self.data[pd.to_numeric(self.data["Alcohol Level (ABV)"], errors='coerce').between(5, 20)]
+
+        # Initialize steps
         self.steps = [
             {
                 "key": "Color",
@@ -169,47 +177,7 @@ class WineRecommender:
             # We have at least one match
             # Provide a list of up to 5 recommendations
             recommendations = df_result.head(5)
-            rec_text = "Based on your current preferences, here are some suggestions:\n\n"
-            for idx, row in recommendations.iterrows():
-                winery = row.get("Winery", "Unknown Winery")
-                country = row.get("Country", "Unknown Country")
-                name = row.get("Name", "Unnamed Wine")
-                vintage = row.get("Vintage", "N/A")
-                abv = row.get("Alcohol Level (ABV)", "N/A")
-                price = row.get("Price", "N/A")
-
-                # Validate and format alcohol level
-                try:
-                    abv_float = float(abv)
-                    if abv_float > 20:  # Assuming no wine has >20% ABV
-                        abv = "N/A"
-                except:
-                    abv = "N/A"
-
-                # Format vintage if it's numeric
-                if pd.notnull(vintage):
-                    try:
-                        vintage = int(vintage)
-                    except ValueError:
-                        vintage = vintage
-
-                rec_text += (
-                    f"{idx + 1}. Winery: {winery}, {country}\n"
-                    f"   {name} {vintage}\n"
-                    f"   {abv}% Alc./vol.\n"
-                    f"   ${price}\n\n"
-                )
-
-            # Add further filtering options
-            rec_text += (
-                "You can further refine your selection based on Appellation or Taste.\n"
-                "For example:\n"
-                "- **Appellation**:\n"
-                "   - *Red*: Blend, Merlot, Bordeaux, Pinot\n"
-                "   - *White*: Blend, Sauvignon, Bourgogne\n"
-                "- **Taste**: Fruity, Dry, Sharp\n\n"
-                "Please let me know if you'd like to apply any additional filters."
-            )
+            rec_text = self.format_recommendations(recommendations)
 
             # If constraints were relaxed, inform the user
             if self.removed_constraints:
@@ -289,6 +257,10 @@ class WineRecommender:
     def validate_slot_choice(self, user_text, slot_key):
         """Validate user input for a specific slot."""
         step_info = self.get_step_by_key(slot_key)
+        if not step_info:
+            logger.error(f"No step found for slot key: {slot_key}")
+            return {"valid": False, "error": "Internal error. Please try again later."}
+
         valid_opts = step_info["options"]
         lower_opts = [opt.lower() for opt in valid_opts]
         t = user_text.lower().strip()
@@ -351,10 +323,14 @@ class WineRecommender:
         if abv_choice:
             abv_range = abv_choice.replace('%','').split('-')
             if len(abv_range) == 2:
-                abv_min, abv_max = float(abv_range[0]), float(abv_range[1])
-                filt["Alcohol Level (ABV)"] = pd.to_numeric(filt["Alcohol Level (ABV)"], errors='coerce').fillna(-1)
-                filt = filt[(filt["Alcohol Level (ABV)"] >= abv_min) & 
-                            (filt["Alcohol Level (ABV)"] <= abv_max)]
+                try:
+                    abv_min, abv_max = float(abv_range[0]), float(abv_range[1])
+                    filt["Alcohol Level (ABV)"] = pd.to_numeric(filt["Alcohol Level (ABV)"], errors='coerce').fillna(-1)
+                    filt = filt[(filt["Alcohol Level (ABV)"] >= abv_min) & 
+                                (filt["Alcohol Level (ABV)"] <= abv_max)]
+                except ValueError:
+                    logger.error(f"Invalid ABV range: {abv_range}")
+                    return pd.DataFrame()
 
         # Filter by Country
         ctry = c["Country"]
@@ -369,13 +345,17 @@ class WineRecommender:
         if price:
             prange = price.replace('$','').split('-')
             if len(prange) == 2:
-                pmin, pmax = float(prange[0]), float(prange[1])
-                # Clean and convert Price column
-                pcol = filt["Price"].astype(str).str.replace('[\\$,€]', '', regex=True).str.replace(',', '')
-                pcol = pd.to_numeric(pcol, errors='coerce')
-                filt["PriceNumeric"] = pcol
-                filt = filt[(filt["PriceNumeric"] >= pmin) & (filt["PriceNumeric"] <= pmax)]
-                logger.debug(f"Filtering wines with Price between ${pmin} and ${pmax}: Found {len(filt)} wines.")
+                try:
+                    pmin, pmax = float(prange[0]), float(prange[1])
+                    # Clean and convert Price column
+                    pcol = filt["Price"].astype(str).str.replace('[\\$,€]', '', regex=True).str.replace(',', '')
+                    pcol = pd.to_numeric(pcol, errors='coerce')
+                    filt["PriceNumeric"] = pcol
+                    filt = filt[(filt["PriceNumeric"] >= pmin) & (filt["PriceNumeric"] <= pmax)]
+                    logger.debug(f"Filtering wines with Price between ${pmin} and ${pmax}: Found {len(filt)} wines.")
+                except ValueError:
+                    logger.error(f"Invalid Price range: {prange}")
+                    return pd.DataFrame()
 
         return filt
 
@@ -409,14 +389,63 @@ class WineRecommender:
         logger.debug("No matches found after fallback.")
         return pd.DataFrame(), removed
 
+    # -------------------------------------------------------------------------
+    # Recommendation Formatting
+    # -------------------------------------------------------------------------
+    def format_recommendations(self, df):
+        """Format multiple recommendation messages based on the DataFrame."""
+        rec_text = "Based on your current preferences, here are some suggestions:\n\n"
+        for idx, row in df.iterrows():
+            winery = row.get("Winery", "Unknown Winery")
+            country = row.get("Country", "Unknown Country")
+            name = row.get("Name", "Unnamed Wine")
+            vintage = row.get("Vintage", "N/A")
+            abv = row.get("Alcohol Level (ABV)", "N/A")
+            price = row.get("Price", "N/A")
+
+            # Validate and format alcohol level
+            try:
+                abv_float = float(abv)
+                if abv_float < 5 or abv_float > 20:  # Define realistic ABV range
+                    abv = "N/A"
+            except:
+                abv = "N/A"
+
+            # Format vintage if it's numeric
+            if pd.notnull(vintage):
+                try:
+                    vintage = int(vintage)
+                except ValueError:
+                    vintage = vintage
+
+            rec_text += (
+                f"{idx + 1}. Winery: {winery}, {country}\n"
+                f"   {name} {vintage}\n"
+                f"   {abv}% Alc./vol.\n"
+                f"   ${price}\n\n"
+            )
+
+        # Add further filtering options
+        rec_text += (
+            "You can further refine your selection based on Appellation or Taste.\n"
+            "For example:\n"
+            "- **Appellation**:\n"
+            "   - *Red*: Blend, Merlot, Bordeaux, Pinot\n"
+            "   - *White*: Blend, Sauvignon, Bourgogne\n"
+            "- **Taste**: Fruity, Dry, Sharp\n\n"
+            "Please let me know if you'd like to apply any additional filters."
+        )
+
+        return rec_text
+
     def format_recommendation(self, row):
-        """Format the recommendation message based on the DataFrame row."""
+        """Format a single recommendation message based on the DataFrame row."""
         winery = row.get("Winery", "Unknown Winery")
+        country = row.get("Country", "Unknown Country")
         name = row.get("Name", "Unnamed Wine")
         vintage = row.get("Vintage", "N/A")
         abv = row.get("Alcohol Level (ABV)", "N/A")
         price = row.get("Price", "N/A")
-        country = row.get("Country", "Unknown Country")
 
         # Validate and format alcohol level
         try:
