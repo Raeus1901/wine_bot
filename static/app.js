@@ -1,3 +1,5 @@
+// app.js
+
 let userId = localStorage.getItem("wine_userId");
 if (!userId) {
   userId = Date.now().toString();
@@ -21,8 +23,27 @@ userInput.addEventListener("keydown", (e) => {
 
 function addMessage(sender, text) {
   const p = document.createElement("p");
-  p.textContent = `${sender}: ${text}`;
   p.classList.add(sender.toLowerCase());
+
+  if (
+    sender === "AI" &&
+    (text.includes("<ol>") ||
+      text.includes("<li>") ||
+      text.includes("<ul>") ||
+      text.includes("<p>"))
+  ) {
+    // Render HTML content for AI messages with recommendations
+    p.innerHTML = text;
+  } else if (sender === "AI" && text.includes("\n")) {
+    // Handle other AI messages with line breaks
+    const formattedText = text
+      .replace(/\n\n/g, "<br><br>")
+      .replace(/\n/g, "<br>");
+    p.innerHTML = `${sender}: ${formattedText}`;
+  } else {
+    p.textContent = `${sender}: ${text}`;
+  }
+
   conversationDiv.appendChild(p);
   conversationDiv.scrollTop = conversationDiv.scrollHeight;
 }
@@ -41,7 +62,7 @@ function addOptionButtons(options) {
     });
     conversationDiv.appendChild(btn);
   });
-  
+
   conversationDiv.scrollTop = conversationDiv.scrollHeight;
 }
 
@@ -56,10 +77,11 @@ function handleSend() {
 
 async function sendChat(text) {
   try {
-    const resp = await fetch(`/conversation?user_id=${userId}`, { // URL relative
+    const resp = await fetch(`/conversation?user_id=${userId}`, {
+      // URL relative
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: text })
+      body: JSON.stringify({ message: text }),
     });
     const data = await resp.json();
 

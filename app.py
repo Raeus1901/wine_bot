@@ -47,11 +47,6 @@ def conversation():
         logger.error("Empty message received.")
         return jsonify({"error": "Empty message"}), 400
 
-    if msg.lower() == "reset":
-        recommender.reset()
-        logger.debug(f"Session for user_id '{user_id}' has been reset.")
-        return jsonify({"message": "Session reset. Let’s start fresh!", "options": []})
-
     try:
         result = recommender.handle_message(msg)
     except Exception as e:
@@ -77,4 +72,3 @@ def reset():
 
 if __name__ == "__main__":
     app.run(debug=True, port=5001)
-
