@@ -4,6 +4,10 @@ Dataset coverage analysis for the wine recommender.
 Computes descriptive statistics and recommender success-rate metrics from the
 enriched wine dataset, for documentation in the README "Dataset Analysis" section.
 
+The raw dataset contains a small number of malformed rows (out-of-range ABV,
+zero price, missing colour). These are filtered explicitly and the number of
+dropped rows is logged -- no silent data loss.
+
 Author: Jean Treves
 License: MIT
 """
@@ -23,10 +27,22 @@ ABV_BANDS: list[tuple[float, float]] = [(11, 12), (12, 13), (13, 14), (14, 15)]
 PRICE_BANDS: list[tuple[float, float]] = [(10, 20), (20, 30), (30, 40), (40, 50)]
 COUNTRY_GROUPS: list[str] = ["France", "Spain", "Italy", "Others"]
 
+# Data quality bounds (matches wine_recommender.py ABV filter of 5-20)
+ABV_VALID_MIN: float = 5.0
+ABV_VALID_MAX: float = 20.0
+PRICE_VALID_MIN: float = 0.01  # a wine priced at exactly $0 is a data error
+
 
 def load_dataset(csv_path: Path) -> pd.DataFrame:
     """
-    Load and validate the wine dataset.
+    Load, validate, and clean the wine dataset.
+
+    Cleaning steps (each logged):
+        1. Normalize the colour column name.
+        2. Coerce ABV and Price to numeric.
+        3. Drop rows with ABV outside [5, 20] % (matches recommender filter).
+        4. Drop rows with non-positive price.
+        5. Drop rows with missing colour.
 
     Parameters
     ----------
@@ -36,12 +52,13 @@ def load_dataset(csv_path: Path) -> pd.DataFrame:
     Returns
     -------
     pd.DataFrame
-        Validated dataframe with normalized numeric columns.
+        Cleaned dataframe ready for analysis.
     """
     df: pd.DataFrame = pd.read_csv(csv_path)
-    logger.info("Loaded dataset: shape=%s", df.shape)
+    n_raw: int = len(df)
+    logger.info("Loaded raw dataset: shape=%s", df.shape)
 
-    # Normalize column name (Colour → Color)
+    # Normalize column name (Colour -> Color)
     if "Colour of Wine" in df.columns:
         df = df.rename(columns={"Colour of Wine": "Color"})
 
@@ -52,59 +69,70 @@ def load_dataset(csv_path: Path) -> pd.DataFrame:
         errors="coerce",
     )
 
-    # Data quality report
-    logger.info("Missing ABV:   %d", df["Alcohol Level (ABV)"].isna().sum())
-    logger.info("Missing Price: %d", df["Price"].isna().sum())
-    return df
+    # --- Data quality filtering (explicit, logged) ---
+    n_bad_abv: int = int((~df["Alcohol Level (ABV)"].between(ABV_VALID_MIN, ABV_VALID_MAX)).sum())
+    df = df[df["Alcohol Level (ABV)"].between(ABV_VALID_MIN, ABV_VALID_MAX)]
+    logger.info("Dropped %d rows: ABV outside [%.0f, %.0f]%%", n_bad_abv, ABV_VALID_MIN, ABV_VALID_MAX)
+
+    n_bad_price: int = int((~(df["Price"] >= PRICE_VALID_MIN)).sum())
+    df = df[df["Price"] >= PRICE_VALID_MIN]
+    logger.info("Dropped %d rows: non-positive or missing price", n_bad_price)
+
+    n_bad_color: int = int(df["Color"].isna().sum())
+    df = df[df["Color"].notna()]
+    logger.info("Dropped %d rows: missing colour", n_bad_color)
+
+    n_clean: int = len(df)
+    logger.info("Clean dataset: %d wines (%d dropped from %d raw)", n_clean, n_raw - n_clean, n_raw)
+    return df.reset_index(drop=True)
 
 
 def coverage_report(df: pd.DataFrame) -> dict[str, object]:
     """
-    Compute descriptive coverage metrics for the dataset.
+    Compute descriptive coverage metrics for the cleaned dataset.
 
     Parameters
     ----------
     df : pd.DataFrame
-        The wine dataset.
+        The cleaned wine dataset.
 
     Returns
     -------
     dict[str, object]
         Coverage metrics keyed by category.
     """
-    report: dict[str, object] = {
+    return {
         "total_wines": len(df),
         "n_countries": df["Country"].nunique(),
         "n_wineries": df["Winery"].nunique(),
-        "price_min": df["Price"].min(),
-        "price_max": df["Price"].max(),
-        "price_median": df["Price"].median(),
-        "abv_min": df["Alcohol Level (ABV)"].min(),
-        "abv_max": df["Alcohol Level (ABV)"].max(),
-        "abv_mean": df["Alcohol Level (ABV)"].mean(),
+        "price_min": round(df["Price"].min(), 2),
+        "price_max": round(df["Price"].max(), 2),
+        "price_median": round(df["Price"].median(), 2),
+        "abv_min": round(df["Alcohol Level (ABV)"].min(), 1),
+        "abv_max": round(df["Alcohol Level (ABV)"].max(), 1),
+        "abv_mean": round(df["Alcohol Level (ABV)"].mean(), 1),
         "color_distribution": df["Color"].value_counts().to_dict(),
         "top_countries": df["Country"].value_counts().head(5).to_dict(),
     }
-    return report
 
 
-def recommender_success_rate(df: pd.DataFrame) -> dict[str, float]:
+def recommender_success_rate(df: pd.DataFrame) -> dict[str, object]:
     """
-    Compute the share of (Color × ABV × Country × Price) slot combinations
+    Compute the share of (Color x ABV x Country x Price) slot combinations
     that yield at least one wine under strict filtering.
 
     This quantifies how often the recommender returns a direct match before
-    needing constraint relaxation — the analogue of a feasible region hit-rate
-    in constrained portfolio optimization.
+    needing constraint relaxation -- the analogue of a feasible-region hit
+    rate in constrained portfolio optimization.
 
     Parameters
     ----------
     df : pd.DataFrame
-        The wine dataset.
+        The cleaned wine dataset.
 
     Returns
     -------
-    dict[str, float]
+    dict[str, object]
         Success rates and combination counts.
     """
     total_combos: int = 0
@@ -129,21 +157,18 @@ def recommender_success_rate(df: pd.DataFrame) -> dict[str, float]:
                         strict_hits += 1
                         continue
 
-                    # Relaxation: drop ABV, widen price ±5 (matches fallback_order)
+                    # Relaxation: drop ABV, widen price +/-5 (matches fallback_order)
                     relaxed_price = df["Price"].between(price_lo - 5, price_hi + 5)
                     relaxed = df[color_mask & ctry_mask & relaxed_price]
                     if len(relaxed) > 0:
                         relaxed_recoverable += 1
 
-    strict_rate: float = strict_hits / total_combos
-    combined_rate: float = (strict_hits + relaxed_recoverable) / total_combos
-
     return {
         "total_combinations": total_combos,
-        "strict_hit_rate": strict_rate,
-        "strict_plus_relaxed_rate": combined_rate,
         "strict_hits": strict_hits,
+        "strict_hit_rate": strict_hits / total_combos,
         "relaxed_recoverable": relaxed_recoverable,
+        "strict_plus_relaxed_rate": (strict_hits + relaxed_recoverable) / total_combos,
     }
 
 
@@ -154,14 +179,12 @@ def main() -> None:
 
     logger.info("=" * 55)
     logger.info("COVERAGE REPORT")
-    coverage: dict[str, object] = coverage_report(df)
-    for key, value in coverage.items():
+    for key, value in coverage_report(df).items():
         logger.info("  %-22s %s", key, value)
 
     logger.info("=" * 55)
     logger.info("RECOMMENDER SUCCESS RATE")
-    success: dict[str, float] = recommender_success_rate(df)
-    for key, value in success.items():
+    for key, value in recommender_success_rate(df).items():
         if isinstance(value, float):
             logger.info("  %-26s %.1f%%", key, value * 100)
         else:
