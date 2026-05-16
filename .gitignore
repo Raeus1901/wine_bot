@@ -1,12 +1,29 @@
-# Environnements virtuels
+# Virtual environments
 venv/
 env/
+.venv/
+
+# Python cache
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
 
-# Fichiers système
+# Logs
+*.log
+
+# System files
 .DS_Store
 Thumbs.db
 
-# Dépendances
+# Dependencies
 node_modules/
+
+# IDE
+.idea/
+.vscode/
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
