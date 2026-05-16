@@ -1,176 +1,172 @@
-# Wine Assistant Bot
+<div align="center">
 
-[![Python](https://img.shields.io/badge/Python-3.10-blue?style=flat-square&logo=python)](https://www.python.org/)
-[![Flask](https://img.shields.io/badge/Flask-2.3-black?style=flat-square&logo=flask)](https://flask.palletsprojects.com/)
-[![Heroku](https://img.shields.io/badge/Deployed-Heroku-79589F?style=flat-square&logo=heroku)](https://www.heroku.com/)
-[![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
+# 🍷 Wine Recommender — Conversational Constraint-Satisfaction Engine
 
-A conversational web application that recommends wines based on a multi-step Q&A flow, backed by a custom Vivino-scraped dataset of 103 wines enriched with 20 attributes (alcohol, blend, region, ratings, tannins, sweetness, food pairings, and more).
+### A Flask chatbot that recommends wines through slot-filling dialogue and **automatic constraint relaxation** — the same fallback pattern used in constrained optimization
 
-The bot guides each user through preference elicitation (color → ABV → country → price), returns top matches, and offers an optional refinement step on blend variety and taste profile. A constraint-relaxation fallback ensures the user always receives recommendations, even when their initial criteria yield zero matches.
+[![Python](https://img.shields.io/badge/python-3.10+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Flask](https://img.shields.io/badge/Flask-2.3-000000?logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
+[![pandas](https://img.shields.io/badge/pandas-1.5-150458?logo=pandas&logoColor=white)](https://pandas.pydata.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
----
-
-## Demo Flow
-
-```
-User: I'd like a red wine, around 13-14%, from Italy, under $30
-Bot:  Found 4 matches in your range:
-
-      1. Tenuta San Guido — Sassicaia 2018 (Bolgheri, Italy)
-         · ABV: 13.5% · Price: $28 · Rating: 4.6/5 (1,247 reviews)
-         · Tasting notes: Fruity, full-bodied, smooth tannins
-         · Food pairing: Red meat, aged cheese
-      ...
-
-      Would you like to refine your search with Blend and Wine Tastes?
-```
+</div>
 
 ---
 
-## Architecture
+## 🎯 What It Does
 
-```
-┌─────────────────────┐         ┌──────────────────────┐         ┌─────────────────────┐
-│   Frontend (HTML/   │  HTTP   │   Flask API (app.py) │ Session │  WineRecommender    │
-│   CSS/JavaScript)   │◄───────►│   /conversation      │◄───────►│  (state machine +   │
-│                     │         │   /reset             │  state  │   pandas filtering) │
-└─────────────────────┘         └──────────────────────┘         └─────────────────────┘
-                                          │                                │
-                                          │                                ▼
-                                          │                  ┌─────────────────────┐
-                                          │                  │   Vivino dataset    │
-                                          │                  │   (103 wines × 20   │
-                                          │                  │    attributes, CSV) │
-                                          │                  └─────────────────────┘
-                                          ▼
-                                ┌──────────────────────┐
-                                │ Multi-session store  │
-                                │ (per user_id)        │
-                                └──────────────────────┘
-```
+The Wine Recommender is a conversational agent that guides a user through a structured
+dialogue to recommend wines from a curated dataset. It captures preferences across four
+dimensions — **colour, alcohol level, country, price** — then optionally refines on
+**blend** and **taste profile**.
 
-The application is stateless from the client's perspective — `user_id` is generated client-side via `localStorage` and passed to the server, where each session maintains its own `WineRecommender` instance with independent criteria state.
+Its defining feature is a **constraint-relaxation fallback**: when no wine satisfies all
+of a user's stated preferences, the engine systematically loosens the least-critical
+constraint until the feasible set is non-empty — and reports exactly which constraints it
+relaxed.
 
----
-
-## Key Features
-
-**Slot-filling conversational state machine.** The recommender tracks six slots — Color, AlcoholLevel, Country, PriceRange, Blend, Wine Tastes — and prompts the user for whichever is unfilled, in priority order.
-
-**Free-text natural language parsing.** Users can phrase preferences flexibly: *"I'd like a strong red under $30 from Italy"* is parsed into `Color=Red`, `AlcoholLevel=14-15%`, `PriceRange=$20-30`, `Country=Italy` in a single message via regex and keyword matching.
-
-**Constraint-relaxation fallback.** If no wines match all criteria, the system progressively relaxes lower-priority constraints (AlcoholLevel first, then PriceRange) until at least one match is found. The user is informed which constraints were relaxed.
-
-**Multi-user session isolation.** Each browser instance receives a unique `user_id`, ensuring concurrent users don't interfere with each other's preference state.
-
-**Production-ready deployment.** Configured for Heroku via `Procfile` and `gunicorn`, with `runtime.txt` pinning Python 3.10.
-
----
-
-## Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| **Backend** | Python 3.10 · Flask 2.3 · Flask-CORS · gunicorn |
-| **Data** | pandas 1.5 · numpy 1.24 · custom Vivino scraper (BeautifulSoup) |
-| **Frontend** | Vanilla JavaScript · HTML5 · CSS3 |
-| **Deployment** | Heroku (Procfile + runtime.txt) |
-| **Logging** | Python `logging` module (DEBUG level for development) |
-
----
-
-## The Dataset
-
-103 wines scraped from Vivino, enriched with 20 attributes per wine:
-
-| Category | Fields |
-|----------|--------|
-| **Identity** | Winery, Name, Vintage, Country, Region |
-| **Composition** | Blend, Grape Types, Alcohol Level (ABV), Colour of Wine |
-| **Quality signals** | Ratings, Number of Ratings, Price |
-| **Sensory profile** | Body (Light–Bold), Tannins (Smooth–Tannic), Sweetness (Dry–Sweet), Acidity (Soft–Acidic), Wine Tastes, Flavor Notes |
-| **Pairing** | Description, Food Pairings |
-
-Data is loaded once at startup, validated for unrealistic ABV values (filtered to 5–20%), and cached in memory across sessions.
-
----
-
-## Project Structure
-
-```
-wine_bot/
-├── app.py                           # Flask routes + session management
-├── wine_recommender.py              # Slot-filling state machine + filtering
-├── multi_client.py                  # Multi-user session service example
-├── wine_database_new.py             # Database utilities
-├── enriched_wine_data_safari.csv    # 103-wine Vivino-scraped dataset
-├── static/
-│   ├── index.html                   # Chat UI
-│   ├── styles.css                   # Styling
-│   └── app.js                       # Client-side logic + localStorage user_id
-├── requirements.txt                 # Python dependencies
-├── runtime.txt                      # Python version pin (3.10)
-└── Procfile                         # Heroku entrypoint
+```text
+User: "I want a strong red from Spain"
+  → Color=Red, ABV=14-15%, Country=Spain
+  → Strict filter: 0 matches
+  → Relax ABV constraint → 4 matches found
+Bot: "Here are 4 wines. Note: we relaxed the alcohol-level constraint."
 ```
 
 ---
 
-## Getting Started
+## 📊 Dataset
 
-### Local development
+The recommender operates over a curated dataset of **103 wines** with 20 attributes each:
+ABV, winery, vintage, country, region, colour, blend, grape types, ratings, price, body /
+tannins / sweetness / acidity scores, tasting notes, and food pairings.
+
+Run the coverage analysis:
+
+```bash
+python analyze_dataset.py
+```
+
+This computes the **recommender hit-rate metric** — the share of all (colour × ABV ×
+country × price) preference combinations that return at least one wine under strict
+filtering, versus after constraint relaxation. The gap between the two quantifies how much
+the fallback mechanism widens the feasible set.
+
+---
+
+## 🏗️ Architecture
+
+```text
+┌─────────────┐    POST /conversation       ┌──────────────────────┐
+│  Browser    │ ──────────────────────────► │  Flask app (app.py)  │
+│  (static/)  │ ◄────────────────────────── │  session per user_id │
+└─────────────┘    JSON {message,options}   └──────────┬───────────┘
+                                                        │
+                                            ┌───────────▼────────────┐
+                                            │  WineRecommender         │
+                                            │  · slot-filling FSM      │
+                                            │  · free-text regex parse │
+                                            │  · strict filter         │
+                                            │  · relaxation fallback   │
+                                            └──────────────────────────┘
+```
+
+Key design elements:
+
+- **Finite state machine** — four `initial_steps` slots (Color, AlcoholLevel, Country,
+  PriceRange), then two `refinement_steps` (Blend, Wine Tastes). Each slot is validated
+  before the FSM transitions.
+- **Session isolation** — each `user_id` gets an independent `WineRecommender` instance
+  with its own conversation state, stored server-side in a `sessions` dict.
+- **Free-text parsing** — regex interpretation of natural input: `"under $30"`,
+  `"less than 13%"`, `"strong"` → `14-15%`, `"light"` → `11-12%`, `"medium"` → `12-13%`.
+- **Constraint relaxation** — ordered fallback (`fallback_order = ["AlcoholLevel",
+  "PriceRange"]`): the engine drops the ABV constraint first, then widens the price band,
+  reporting each relaxation back to the user.
+- **Colour-aware refinement** — the Blend options are dynamically filtered to the blends
+  actually present for the chosen wine colour.
+
+---
+
+## 🚀 Quick Start
 
 ```bash
 git clone https://github.com/Raeus1901/wine_bot.git
 cd wine_bot
-
 pip install -r requirements.txt
+
 python app.py
+# → http://localhost:5001
 ```
 
-The bot is now available at `http://localhost:5001`.
-
-### Deployment (Heroku)
+API example:
 
 ```bash
-heroku create your-wine-bot
-git push heroku main
-heroku open
-```
-
-The `Procfile` automatically launches gunicorn against `app:app`.
-
----
-
-## API Endpoints
-
-| Endpoint | Method | Purpose |
-|----------|--------|---------|
-| `/` | GET | Serves the chat UI |
-| `/conversation?user_id={id}` | POST | Send a message, receive bot response + options |
-| `/reset?user_id={id}` | POST | Clear the user's session state |
-
-**Example request:**
-
-```bash
-curl -X POST "http://localhost:5001/conversation?user_id=user_123" \
+curl -X POST "http://localhost:5001/conversation?user_id=demo" \
   -H "Content-Type: application/json" \
-  -d '{"message": "Red wine from France under $30"}'
+  -d '{"message": "I want a strong red from Spain"}'
 ```
 
-**Response:**
+Endpoints:
 
-```json
-{
-  "message": "What is your preferred alcohol range?",
-  "options": ["11-12%", "12-13%", "13-14%", "14-15%"]
-}
-```
+| Route | Method | Purpose |
+|-------|--------|---------|
+| `/` | GET | Serve the chat UI (`static/index.html`) |
+| `/wine_recommender_endpoint` | POST | Stateless greeting on page load |
+| `/conversation?user_id=<id>` | POST | Main stateful dialogue turn |
+| `/reset?user_id=<id>` | POST | Clear a user's session |
 
 ---
 
-## Author
+## 📈 Relevance to Quantitative & Systematic Work
 
-**Jean Trèves** — M.A. QMSS, Columbia University  
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/jean-treves-bbaa91257)
-[![GitHub](https://img.shields.io/badge/GitHub-Raeus1901-black?style=flat-square&logo=github)](https://github.com/Raeus1901)
+This is a side project, but its core mechanics map onto patterns used in quantitative
+finance:
+
+- **Constraint relaxation = optimization under active constraints.** When a mandate
+  (sector cap + tracking-error limit + turnover budget) admits no feasible portfolio, a
+  practitioner slackens the least-binding constraint first. The recommender's
+  `fallback_order` is exactly this: an explicit, ordered relaxation hierarchy with
+  transparent reporting of what was dropped.
+- **Slot-filling FSM = structured preference elicitation.** Capturing a client's risk
+  tolerance, horizon, and liquidity needs through validated, sequential questioning is the
+  same dialogue pattern as capturing colour / ABV / country / price.
+- **Hit-rate metric = feasible-region diagnostics.** Measuring the share of preference
+  combinations that yield a match is the recommender analogue of asking what fraction of
+  mandates are feasible under the current asset universe.
+
+The transferable skill is translating a fuzzy human objective into a structured, relaxable
+constraint problem with explicit fallback logic.
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Backend | Flask 2.3.2, Werkzeug 2.3.3 |
+| Data | pandas 1.5.3, numpy 1.24.3 |
+| Frontend | Vanilla HTML / CSS / JS (`static/`) |
+| WSGI server | Gunicorn 20.1.0 (`Procfile` included) |
+
+---
+
+## ⚠️ Notes & Limitations
+
+- **Dataset size.** 103 wines is a demonstration dataset; production use would require a
+  larger, regularly-refreshed catalogue.
+- **Parsing.** Free-text interpretation is regex-based, not a learned NLU model — robust
+  for supported phrasings, brittle outside them.
+- **Recommendation logic.** Filtering is rule-based; there is no collaborative-filtering
+  or learned ranking. A natural extension would be a learned ranker over the feasible set.
+- **Price-range relaxation.** The price-band fallback expects a `$min-$max` token format;
+  the ABV relaxation is the primary working fallback path.
+
+---
+
+## 👤 Author
+
+**Jean Treves** — M.A. Quantitative Methods in the Social Sciences, Columbia University
+[LinkedIn](https://www.linkedin.com/in/jean-treves-bbaa91257/) • [GitHub](https://github.com/Raeus1901)
+
+> Master thesis (FinBERT × SARIMAX): [finbert-sarimax-energy-forecasting](https://github.com/Raeus1901/finbert-sarimax-energy-forecasting)
