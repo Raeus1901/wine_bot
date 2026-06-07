@@ -20,7 +20,7 @@ from wine_recommender import WineRecommender
 class MultiUserRecommenderService:
     """
     A service that manages multiple WineRecommender instances,
-    one for each user/session ID.5
+    one for each user/session ID.
     """
     def __init__(self, csv_path):
         self.csv_path = csv_path
@@ -50,4 +50,4 @@ if __name__ == "__main__":
     print(alice_recommender.get_current_question())  # Q1
 
     bob_recommender = service.get_recommender("bob")
-    print(bob_recommender.get_current_question())    # Q1 (separate session)55
+    print(bob_recommender.get_current_question())    # Q1 (separate session)

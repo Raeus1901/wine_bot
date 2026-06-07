@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# Dev utility — not part of the production pipeline. Requires: pip install selenium
 """
 wine_database_new.py
 
